@@ -1,0 +1,25 @@
+<!--templates/product-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="product-grid.wxml" />
+
+<template name="product-list-card">
+    <view class="product-list product-list-card">
+        <view class="column">
+            <block wx:for="{{products}}" wx:if="{{index % 2 == 0 }}" wx:key="product">
+                <template is="product-grid" data="{{index, item, inEdit, selectedProducts, currency, br, shadow}}"></template>
+            </block>
+        </view>
+        <view class="column">
+            <block wx:for="{{products}}" wx:if="{{index % 2 != 0 }}" wx:key="product">
+                <template is="product-grid" data="{{index, item, inEdit, selectedProducts, currency, br, shadow}}"></template>
+            </block>
+        </view>
+    </view>
+</template>

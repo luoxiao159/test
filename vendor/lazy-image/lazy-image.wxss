@@ -1,0 +1,40 @@
+/**
+ * Project: lazy-image
+ * Description: 小程序图片懒加载组件
+ * Author: 
+ * Organization: 
+ * Version: 20200212
+ */
+
+.lazy-image-wrapper {
+    background-color: #eee;
+    transition: opacity 0.5s ease-in-out;
+    position: relative;
+}
+
+.lazy-image-wrapper.show {
+    background-color: transparent !important;
+}
+
+.lazy-image-wrapper .lazy-image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.lazy-image-wrapper.show .lazy-image {
+    opacity: 1;
+}
+
+.lazy-image-wrapper .lazy-image-loading {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

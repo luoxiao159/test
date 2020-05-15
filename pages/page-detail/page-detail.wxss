@@ -1,0 +1,39 @@
+/* pages/page-detail/page-detail.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.ui-nav-bar {
+    transition: background-color 0.2s ease-in-out;
+}
+
+nav-bar:not(.show) .ui-nav-bar {
+    box-shadow: none;
+}
+
+nav-bar:not(.show)  .nav-bar-item.title text {
+    color: #fff;
+}
+
+.container {
+    background-color: #fff;
+    overflow: hidden;
+}
+
+/* 分享 */
+
+.share-popup {
+    display: flex;
+    margin-top: -12px;
+}

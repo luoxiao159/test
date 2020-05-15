@@ -1,0 +1,106 @@
+/* pages/order-review-list/order-review-list.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+page {
+    background-color: #f5f5f5;
+}
+
+/* 购物车列表 */
+
+.cart-list {
+    background-color: #fff;
+    margin: 0;
+}
+
+.cart-item {
+    display: flex;
+    position: relative;
+    padding: 8px 15px;
+}
+
+.cart-item:not(.reviewed):active {
+    background-color: #ddd;
+}
+
+.cart-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    border-bottom: 1px solid #ddd;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.cart-item .product-image {
+    flex-shrink: 0;
+    width: 120rpx;
+    height: 120rpx;
+    flex-basis: 120rpx;
+}
+
+.cart-item .cart-detail-wrapper {
+    display: flex;
+    flex-grow: 1;
+    padding: 0 20rpx;
+}
+
+.cart-item .cart-detail {
+    width: 400rpx;
+}
+
+.cart-item .cart-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cart-item .cart-detail .product-title, .cart-item .cart-detail .choose-wrapper {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cart-item .cart-detail .product-title {
+    word-break: break-all;
+    font-size: 13px;
+}
+
+.cart-item .cart-detail .choose-wrapper {
+    font-size: 12px;
+}
+
+.cart-item .cart-detail .choose-wrapper text {
+    color: #888;
+}
+
+.cart-item .review {
+    color: #707070;
+    font-size: 13px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.cart-item:not(.reviewed) .review {
+    color: var(--mainColor);
+}
+
+.cart-item .review text {
+    margin-right: 5px;
+}
+
+.cart-item .review image, .cart-item .review .placeholder {
+    width: 15px;
+    height: 15px;
+}

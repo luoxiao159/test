@@ -1,0 +1,194 @@
+/* pages/groupon-result/groupon-result.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+/* W2W Extension, Name: w2w-products-groupon, Code: grouponResultStyles */
+
+page {
+    background-color: #f5f5f5;
+}
+
+.container {
+    padding-bottom: 60px;
+}
+
+.product-block {
+    display: flex;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+.product-image {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+}
+
+.product-info {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.product-title {
+    font-size: 14px;
+}
+
+.product-desc {
+    margin-top: 6px;
+    color: #777;
+}
+
+.product-price {
+    display: flex;
+    align-items: flex-end;
+}
+
+.product-price text {
+    line-height: 1;
+}
+
+.main-price {
+    font-size: 18px;
+    color: var(--mainColor);
+    display: flex;
+    align-items: flex-end;
+    margin-right: 10px;
+}
+
+.main-price .yuan {
+    font-size: 12px;
+}
+
+.price-saved {
+    line-height: 1;
+    color: #777;
+    font-size: 12px;
+}
+
+.result-main {
+    background-color: #fff;
+    text-align: center;
+    padding: 30px 0;
+    margin-bottom: 10px;
+}
+
+.result-label {
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.result-label .member-remain {
+    margin: 0 5px;
+}
+
+.result-label text {
+    line-height: 1;
+}
+
+.result-expire {
+    font-size: 14px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.expire-label {
+    color: #777;
+}
+
+.result-expire text {
+    display: inline-block;
+    line-height: 1;
+}
+
+.countdown {
+    margin-left: 8px;
+}
+
+.countdown-num, .countdown-sp {
+    padding: 4px 3px;
+}
+
+.countdown-num {
+    color: #fff;
+    background-color: #555;
+    border-radius: 2px;
+}
+
+.main-btn {
+    font-size: 15px;
+    margin: 0 20px;
+    margin-top: 25px;
+    height: 45px;
+    line-height: 45px;
+}
+
+.result-detail {
+    background-color: #fff;
+    padding-top: 7px;
+}
+
+.groupon-members {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.popup-btn {
+    padding: 0 15px;
+}
+
+.popup-btn .button-main {
+    justify-content: space-between;
+}
+
+.popup-btn .title {
+    color: #777;
+    width: 45px;
+    flex-shrink: 0;
+}
+
+.popup-btn .content {
+    padding-right: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popup-btn .go-popup {
+    padding-left: 7px;
+}
+
+.groupon-result-img {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+}
+
+.groupon-result-img.success {
+    border: 1px solid var(--mainColor);
+    border-radius: 50%;
+    box-sizing: border-box;
+    padding: 3px;
+}
+
+.groupon-success-date {
+    color: #555;
+}
+
+.popup-btn.more-product text {
+    color: var(--mainColor);
+}
+
+/* W2W Extension, Name: w2w-products-groupon, Code: grouponResultStyles */

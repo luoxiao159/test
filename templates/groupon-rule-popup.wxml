@@ -1,0 +1,26 @@
+<!--templates/groupon-rule-popup.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="groupon-rule-popup">
+    <!-- W2W Extension, Name: w2w-products-groupon, Code: groupRulePopup -->
+    <view class="zan-popup zan-popup--bottom groupon-rule-popup {{isGrouponRulePopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeGrouponRulePopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+			<view class="title">拼团玩法</view>
+			<view class="content">参与方式：</view>
+			<view class="content">1、挑选可拼团产品，发起新拼团或加入他人的拼团</view>
+			<view class="content">2、完成支付，并邀请好友，好友支付完成后加入</view>
+			<view class="content">3、在拼团有效期内，凑满所需人数，则拼团成功并发货</view>
+			<view class="content">4、未达到规定人数，拼团失败，系统自动退款</view>
+
+			<image class="close-btn" src="/images/close.svg" bindtap="closeGrouponRulePopup"></image>
+        </view>
+    </view>
+    <!-- W2W Extension, Name: w2w-products-groupon, Code: groupRulePopup -->
+</template>

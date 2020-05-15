@@ -1,0 +1,23 @@
+<!--templates/groupon-members.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="groupon-members">
+    <!-- W2W Extension, Name: w2w-products-groupon, Code: groupMembers -->
+    <view class="groupon-members">
+        <block wx:for="{{groupon.member_amount}}" wx:key="key">
+            <view class="groupon-member {{item == 0 ? 'leader' : ''}}">
+                <image src="{{groupon.members[item] ? groupon.members[item].avatar : '/images/groupon-unknown-member.svg'}}"></image>
+                <view wx:if="{{groupon.members[item]}}" class="groupon-member-mask">
+                    <text wx:if="{{item == 0}}" class="leader-label">团长</text>
+                </view>
+            </view>
+        </block>
+    </view>
+    <!-- W2W Extension, Name: w2w-products-groupon, Code: groupMembers -->
+</template>

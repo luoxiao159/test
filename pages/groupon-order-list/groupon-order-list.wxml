@@ -1,0 +1,99 @@
+<!--pages/groupon-order-list/groupon-order-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<!-- W2W Extension, Name: w2w-products-groupon, Code: grouponOrderListContent -->
+
+<import src="/vendor/ZanUI/tab/index.wxml" />
+<import src="/vendor/ZanUI/loadmore/index.wxml" />
+<import src="/templates/order-cart-list.wxml" />
+<import src="/templates/payment-choose-popup.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view class="container order-list">
+
+    <view class="order-status-bar" style="padding-top:{{NAV_HEIGHT}}">
+        <template is="zan-tab" data="{{ tab: { list: tabList, selectedId: tabSelected, scroll: true, height: 0 }, componentId: 'order-tab' }}"></template>
+    </view>
+
+    <view class="tab-content-wrapper">
+
+        <view wx:if="{{bottomStyle == 'empty'}}" class="empty-order center">
+            <text>还没有相关订单</text>
+        </view>
+        <block wx:for="{{orders}}" wx:key="key">
+            <view class="order">
+
+                <view class="order-main" data-id="{{item.id}}" bindtap="goOrderDetail">
+
+                    <view class="order-header">
+                        <view class="order-header-left">
+                            <!-- W2W Extension, Name: w2w-products-groupon, Code: orderGrouponTag -->
+                            <text wx:if="{{item.groupon}}" class="groupon-tag {{item.groupon.groupon_type == 'main_order' ? 'main' : ''}}">拼</text>
+                            <!-- W2W Extension, Name: w2w-products-groupon, Code: orderGrouponTag -->
+                            <text class="order-number">{{item.date_created}}</text>
+                        </view>
+                        <text class="order-status">{{item.status_name}}</text>
+                    </view>
+
+                    <template is="order-cart-list" data="{{line_items: item.line_items, currency}}"></template>
+
+                    <!-- 价格详情开始 -->
+                    <view class="order-price">
+                        <view>
+                            <text>{{item.line_items_count}}件产品</text>
+                        </view>
+                        <view>
+                            <text>合计</text>
+                            <text class="currency">{{currency}}</text>
+                            <text>{{item.total}}</text>
+                        </view>
+                        <view>
+                            <text>运费</text>
+                            <text class="currency">{{currency}}</text>
+                            <text>{{item.shipping_total}}</text>
+                        </view>
+                    </view>
+                    <!-- 价格详情结束 -->
+
+                </view>
+
+                <!-- 操作按钮开始 -->
+                <view class="actions-button">
+                    <button class="btn" open-type="contact" show-message-card="true" session-from="shop-order-list" send-message-title="商城订单 - {{item.id}}">联系客服</button>
+                    <block wx:if="{{item.status == 'pending' || item.status == 'on-hold'}}">
+                        <button class="btn" data-index="{{index}}" data-id="{{item.id}}" bindtap="cancelOrder">取消订单</button>
+                    </block>
+                    <block wx:if="{{item.status == 'pending'}}">
+                        <button class="btn btn-primary" data-index="{{index}}" data-id="{{item.id}}" bindtap="openPaymentChoosePopup">付款</button>
+                    </block>
+                    <!-- W2W Extension, Name: w2w-products-groupon, Code: groupOrderShareBtn -->
+                    <block wx:if="{{!item.groupon.is_dismiss && !item.groupon.is_success && item.groupon.is_grouped_on && !item.groupon.is_expired}}">
+                        <button class="btn btn-primary" open-type="share" data-index="{{index}}">邀请好友</button>
+                    </block>
+                    <!-- W2W Extension, Name: w2w-products-groupon, Code: groupOrderShareBtn -->
+                </view>
+                <!-- 操作按钮结束 -->
+
+            </view>
+        </block>
+
+        <template wx:if="{{bottomStyle == 'nomore'}}" is="zan-loadmore" data="{{nomore:true}}"></template>
+    </view>
+
+    <template is="payment-choose-popup" data="{{show: isPaymentChoosePopup, popupOrder}}"></template>
+</view>
+
+<!-- W2W Extension, Name: w2w-products-groupon, Code: grouponOrderListContent -->

@@ -1,0 +1,103 @@
+<!--pages/address-edit/address-edit.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<!-- W2W Extension, Name: w2w-advanced-address, Code: addressEditContent -->
+<import src="/vendor/ZanUI/toptips/index.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view wx:if="{{mode == 'add' || (mode == 'edit' && address != null)}}" class="container address-edit">
+    <view class="form">
+        <form bindsubmit="saveAddress">
+            <view class="fields">
+                <block wx:for="{{fields}}" wx:for-index="name" wx:key="key">
+                    <view class="field {{focusing == name ? 'focusing' : ''}}">
+                        <view class="field-label">
+                            {{item.label}}
+                        </view>
+                        <view class="field-input">
+                            <block wx:if="{{item.type == 'text'}}">
+                                <input name="{{name}}" placeholder="{{item.placeholder || item.label}}" confirm-type="next" value="{{mode == 'edit' ? address[name] : fields[name].value}}" data-name="{{name}}" bindfocus="inputFocus"></input>
+
+                            </block>
+                            <block wx:elif="{{item.type == 'number'}}">
+                                <input name="{{name}}" type="number" placeholder="{{item.placeholder || item.label}}" value="{{mode == 'edit' ? address[name] : ''}}" confirm-type="next" data-name="{{name}}" bindfocus="inputFocus"></input>
+                            </block>
+                            <block wx:elif="{{item.type == 'select'}}">
+                                <block wx:if="{{name == 'billing_country'}}">
+                                    <view bindtap="openCountryPopup">{{allCountries[selectedCountryIndex].label}}
+                                        <image src="/images/go_light.svg"></image>
+                                    </view>
+                                </block>
+                                <block wx:elif="{{name == 'billing_state'}}">
+                                    <block wx:if="{{allStates === false}}">
+                                        <input name="{{name}}" placeholder="{{item.placeholder || item.label}}" value="{{mode == 'edit' ? ( addressList[id][name].id == null ? address[name] : '' ) : ''}}" confirm-type="next" data-name="{{name}}" bindfocus="inputFocus"></input>
+                                    </block>
+                                    <block wx:else>
+                                        <view bindtap="openStatePopup">{{allStates[selectedStateIndex].label}}
+                                            <image src="/images/go_light.svg"></image>
+                                        </view>
+                                    </block>
+                                </block>
+                            </block>
+
+                            <block wx:if="{{allCountries[selectedCountryIndex].id == 'CN' && name == 'billing_address_1'}}">
+                                <image class="choose-location" src="/images/location_fill.svg" bindtap="chooseLocation"></image>
+                            </block>
+                        </view>
+                    </view>
+                </block>
+            </view>
+            <button class="submit" type="primary" form-type="submit">保存</button>
+        </form>
+    </view>
+
+    <view class="zan-popup zan-popup--bottom country-popup {{isCountryPopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeCountryPopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <scroll-view scroll-y="{{true}}" class="select-list">
+                <block wx:if="{{countries.length > 0}}">
+                    <block wx:for="{{countries}}" wx:key="key">
+                        <view class="item country-item thin-border thin-border-bottom" data-id="{{item.id}}" bindtap="countryChange">{{item.label}}</view>
+                    </block>
+                </block>
+                <block wx:else>
+                    <view class="empty-list">暂无搜索结果</view>
+                </block>
+            </scroll-view>
+        </view>
+        <input class="filter-input" placeholder="搜索..." placeholder-class="input-placeholder-gray" value="{{countrySearchValue}}" bindinput="filterCountry"></input>
+    </view>
+
+    <view class="zan-popup zan-popup--bottom state-popup {{isStatePopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeStatePopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <scroll-view scroll-y="{{true}}" class="select-list">
+                <block wx:if="{{states.length > 0}}">
+                    <block wx:for="{{states}}" wx:key="key">
+                        <view class="item thin-border thin-border-bottom" data-id="{{item.id}}" bindtap="stateChange">{{item.label}}</view>
+                    </block>
+                </block>
+                <block wx:else>
+                    <view class="empty-list">暂无搜索结果</view>
+                </block>
+            </scroll-view>
+        </view>
+        <input class="filter-input" placeholder="搜索..." placeholder-class="input-placeholder-gray" value="{{stateSearchValue}}" bindinput="filterState"></input>
+    </view>
+
+    <template is="zan-toptips" data="{{ zanTopTips, top: NAV_HEIGHT }}"></template>
+</view>
+<!-- W2W Extension, Name: w2w-advanced-address, Code: addressEditContent -->

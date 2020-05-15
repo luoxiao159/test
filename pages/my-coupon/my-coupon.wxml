@@ -1,0 +1,101 @@
+<!--pages/my-coupon/my-coupon.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<!-- W2W Extension, Name: w2w-advanced-coupon, Code: myCouponContent -->
+<import src="/vendor/ZanUI/tab/index.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view class="container coupon {{mode}}">
+
+    <view wx:if="{{mode == 'view'}}" class="coupon-status-bar" style="padding-top:{{NAV_HEIGHT}}">
+        <template is="zan-tab" data="{{ tab: { list: tabList, selectedId: tabSelected, scroll: true, height: 0 }, componentId: 'order-tab' }}"></template>
+    </view>
+
+    <!-- 输入优惠券开始 -->
+    <form bindsubmit="couponSubmit">
+        <view class="coupon-input-wrapper">
+            <input class="coupon-input" type="text" name="coupon" placeholder="请输入优惠券码" confirm-type="done" placeholder-class="input-placeholder-gray" bindconfirm="couponSubmit" value="{{coupon_input}}" bindinput="couponInput"></input>
+            <button class="btn btn-primary submit-button {{! btnEnabled ? 'disabled' : ''}}" form-type="submit">确定</button>
+        </view>
+    </form>
+    <!-- 输入优惠券结束 -->
+
+    <!-- 优惠券列表开始 -->
+    <block wx:for="{{tabList}}" wx:for-item="tab" wx:key="key">
+        <view class="coupon-list {{tab.id}} {{tab.id == tabSelected ? 'show' : ''}}">
+
+            <block wx:if="{{coupons[tab.id].length > 0}}">
+                <block wx:for="{{coupons[tab.id]}}" wx:key="key">
+                    <template wx:if="{{mode != 'select' || ( mode == 'select' && item.is_valid )}}" is="coupon" data="{{mode, tab, index, item, expandedCoupons, currency}}"></template>
+                </block>
+                <block wx:if="{{coupons.notused.length > coupons.valid_count}}">
+                    <view class="invalid-coupons-text">以下此订单不可用</view>
+                    <block wx:for="{{coupons[tab.id]}}" wx:key="key">
+                        <template wx:if="{{! item.is_valid}}" is="coupon" data="{{mode, tab, index, item, expandedCoupons, currency}}"></template>
+                    </block>
+                </block>
+            </block>
+            <block wx:else>
+                <view class="no-used-coupon">暂无优惠券</view>
+            </block>
+        </view>
+    </block>
+    <!-- 优惠券列表结束 -->
+
+</view>
+
+<template name="coupon">
+    <view class="coupon {{item.discount_type}} {{mode == 'select' && ! item.is_valid ? 'invalid' : ''}}">
+        <view class="coupon-main" data-index="{{index}}" data-code="{{item.code}}" bindtap="{{mode == 'select' && tab.id == 'notused' && item.is_valid ? 'couponTap' : '' }}">
+            <image src="/images/{{tab.id == 'notused' && ( mode != 'select' || ( mode == 'select' && item.is_valid )  ) ? 'coupon-not-used.svg' : 'coupon-expired.svg'}}" mode="widthFix"></image>
+            <view class="coupon-content">
+                <view class="coupon-value">
+                    <block wx:if="{{item.discount_type == 'percent'}}">
+                        <view class="product-price">
+                            <text>{{item.amount}}</text>
+                            <text class="currency">折</text>
+                        </view>
+                    </block>
+                    <block wx:else>
+                        <view class="product-price">
+                            <text class="currency">{{currency}}</text>
+                            <text>{{item.amount}}</text>
+                        </view>
+                    </block>
+                </view>
+                <view class="coupon-detail">
+                    <view class="coupon-description">
+                        <text>{{item.description}}</text>
+                    </view>
+                    <view wx:if="{{item.date_expires != null }}" class="coupon-expiry-date">
+                        <text>有效期至 {{item.date_expires}}</text>
+                    </view>
+                    <view class="applied" wx:if="{{mode == 'select' && item.applied}}">
+                        <image src="/images/coupon-check.svg"></image>
+                    </view>
+                    <view wx:if="{{mode == 'view' && tab.id == 'notused'}}" class="goto-use" data-code="{{item.code}}" bindtap="goToUse">去使用</view>
+                </view>
+            </view>
+        </view>
+        <view class="instruction {{expandedCoupons[item.code] ? 'expand' : ''}}">
+            <text>{{item.instruction}}</text>
+            <view wx:if="{{item.showExpandBtn == true}}" class="expand-btn" data-code="{{item.code}}" bindtap="expandSwitch">
+                <image src="/images/back_white_light.svg"></image>
+            </view>
+        </view>
+    </view>
+</template>
+<!-- W2W Extension, Name: w2w-advanced-coupon, Code: myCouponContent -->

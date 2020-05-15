@@ -1,0 +1,31 @@
+<!--templates/review-reply.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="review-reply">
+    <view class="zan-popup zan-popup--bottom reply-review-popup {{isReplyPopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeReplyPopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <form report-submit="{{true}}" bindsubmit="submitReply">
+                <view class="reply-to">回复
+                    <text class="reply-to-name">{{replyTo.name}}</text> 的评价
+                </view>
+                <view class="reply-input-wrapper">
+                    <view class="reply-input">
+                        <input name="content" confirm-type="send" cursor-spacing="13" bindconfirm="submitReply" placeholder="说点什么吧~" placeholder-class="input-placeholder-thin-gray" value="{{replyInputValue}}"></input>
+                    </view>
+                    <view class="reply-send">
+                        <button form-type="submit">
+                            <image src="/images/reply-send.svg"></image>
+                        </button>
+                    </view>
+                </view>
+            </form>
+        </view>
+    </view>
+</template>

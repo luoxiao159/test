@@ -1,0 +1,39 @@
+<!--templates/coupon.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="coupon">
+    <!-- W2W Extension, Name: w2w-advanced-coupon, Code: couponTemplate -->
+    <view class="coupon {{item.discount_type}} {{Util.isTrue(item.is_receive_limit_reached) ? 'invalid' : ''}}" data-code="{{item.code}}" bindtap="receiveCoupon">
+        <image src="/images/{{Util.isTrue(item.is_receive_limit_reached) ? 'get-coupon-expired.svg' : 'get-coupon.svg'}}" mode="widthFix"></image>
+        <view class="coupon-content">
+            <view class="coupon-value">
+                <block wx:if="{{item.discount_type == 'percent'}}">
+                    <view class="product-price">
+                        <text>{{item.amount}}</text>
+                        <text class="currency">折</text>
+                    </view>
+                </block>
+                <block wx:else>
+                    <view class="product-price">
+                        <text class="currency">{{currency}}</text>
+                        <text>{{item.amount}}</text>
+                    </view>
+                </block>
+            </view>
+            <view class="coupon-receive">{{Util.isTrue(item.is_receive_limit_reached) ? '已抢光' : '立即领取'}}</view>
+        </view>
+    </view>
+    <!-- W2W Extension, Name: w2w-advanced-coupon, Code: couponTemplate -->
+</template>
+<wxs module="Util">
+    var isTrue = function(s) {
+        return s === true || s === 'true';
+    }
+    module.exports.isTrue = isTrue;
+</wxs>

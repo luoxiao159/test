@@ -1,0 +1,25 @@
+<!--templates/poster-popup.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="poster-popup">
+    <view class="zan-popup zan-popup--center poster-popup {{isPosterPopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closePosterPopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <view class="poster-wrapper">
+                <canvas style="width:{{width}}px; height:{{height}}px;" canvas-id="poster_canvas" />
+                <view class="poster">
+                    <image src="{{posterImage}}" mode="widthFix"></image>
+                </view>
+                <view class="actions">
+                    <view class="confirm" bindtap="savePoster">保存到相册</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>

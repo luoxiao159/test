@@ -1,0 +1,164 @@
+/* pages/address-edit/address-edit.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+/* W2W Extension, Name: w2w-advanced-address, Code: addressEditStyles */
+
+.form {
+    padding: 15px;
+}
+
+.form .submit {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0;
+    border: 0;
+    font-size: 14px;
+    line-height: 1;
+    background-color: var(--mainColor);
+}
+
+.fields {
+    padding-bottom: 50px;
+}
+
+.form .field {
+    height: 50px;
+    display: flex;
+    position: relative;
+}
+
+.form .field::before, .form .field::after {
+    content: "";
+    position: absolute;
+    top: -0.5px;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.form .field::before {
+    transform: scale(0, 0.5);
+    border-bottom: 1px solid var(--mainColor);
+    z-index: 2;
+}
+
+.form .field::after {
+    border-bottom: 1px solid #ddd;
+}
+
+.form .field.focusing::before {
+    transform: scale(0.5, 0.5);
+}
+
+.field .field-label {
+    width: 6em;
+    margin-left: 5px;
+}
+
+.field .field-input {
+    flex-grow: 1;
+}
+
+.field .field-input input {
+    display: flex;
+    align-items: center;
+}
+
+.field .field-input input, .field .field-input view {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.field .field-label, .field .field-input, .field .field-input view {
+    height: 50px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.field .field-input view {
+    justify-content: space-between;
+}
+
+.field .field-input view image {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    flex-shrink: 0;
+    transform: rotate(90deg);
+}
+
+.empty-list {
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+}
+
+.select-list {
+    padding-bottom: 51px;
+    position: relative;
+}
+
+.select-list .item {
+    height: 50px;
+    padding: 0 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.filter-input {
+    font-size: 14px;
+    padding: 0 15px;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 31;
+    background-color: #fff;
+    transition: all 0.1s ease;
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+}
+
+.zan-popup--show .filter-input {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.country-popup .zan-popup__container, .state-popup .zan-popup__container {
+    max-height: 80%;
+    overflow-y: auto;
+}
+
+.choose-location {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+/* W2W Extension, Name: w2w-advanced-address, Code: addressEditStyles */

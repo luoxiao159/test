@@ -1,0 +1,59 @@
+<!--pages/address-list/address-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<!-- W2W Extension, Name: w2w-advanced-address, Code: addressListContent -->
+
+<import src="/vendor/ZanUI/toptips/index.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view class="container address-list">
+
+    <view wx:if="{{addressList != null}}" class="list">
+        <block wx:if="{{addressList.length > 0}}">
+            <block wx:for="{{addressList}}" wx:key="key">
+                <view class="address" data-index="{{index}}" bindtap="addressTap" bindlongpress="openActionPopup">
+                    <view class="customer-info">
+                        <text>{{item.billing_first_name}}</text>
+                        <text>{{item.billing_phone}}</text>
+                    </view>
+                    <view class="address-detail">
+                        <text>{{item.billing_country}}</text>
+                        <text>{{item.billing_state}}</text>
+                        <text>{{item.billing_city}}</text>
+                        <text>{{item.billing_address_1}}</text>
+                    </view>
+                </view>
+            </block>
+        </block>
+        <block wx:else>
+            <view class="center">
+                <text>暂无保存的地址</text>
+            </view>
+        </block>
+    </view>
+
+    <button class="btn add-btn import-wechat thin-border thin-border-top" bindtap="{{addressAuth ? 'selectAddressSuccess' : ''}}" open-type="{{! addressAuth ? 'openSetting' : ''}}" bindopensetting="{{! addressAuth ? 'openSetting' : ''}}">
+        <image src="/images/wechat.svg"></image>
+        <text>{{mode == 'select' ? '使用微信地址' : '导入微信地址'}}</text>
+    </button>
+    <button class="btn add-btn thin-border thin-border-top" bindtap="goAddAddress">
+        <image src="/images/add_light.svg"></image>
+        <text>新增地址</text>
+    </button>
+
+    <template is="zan-toptips" data="{{ zanTopTips, top: NAV_HEIGHT }}"></template>
+</view>
+<!-- W2W Extension, Name: w2w-advanced-address, Code: addressListContent -->

@@ -1,0 +1,1723 @@
+<!--**
+ * Project: html2wxml
+ * Description: 将HTML、Markdown转为微信小程序WXML
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/templates/coupon.wxml" />
+<wxs src="../../utils/util.wxs" module="Util" />
+
+<!-- 基础元素 -->
+
+<template name="video-cover">
+    <view class="video-cover">
+        <view class="cover-center" data-type="{{type}}" data-id="{{id}}" bindtap="playVideo">
+            <image class="cover-poster" src="{{poster}}"></image>
+            <image class="cover-play" src="/images/play.svg"></image>
+            <view class="cover-duration">{{duration}}</view>
+        </view>
+        <!--<view class="cover-muted">
+            <image src="/images/camera.svg"></image>
+        </view>-->
+    </view>
+</template>
+
+<template name="wxmlVideo">
+    <view class="{{item.attr.class}} wxml-video media-wrapper {{playingVideos[item.attr.id ? item.attr.id : Util.md5(item.attr.src)] ? 'playing' : ''}}" style="{{item.attr.style}}">
+        <video id="{{item.attr.id ? item.attr.id : Util.md5(item.attr.src)}}" class="{{item.attr.class}}" src="{{item.attr.src ? item.attr.src : item.nodes[0].attr.src}}" controls="{{item.attr.controls != undefined ? true : false}}" loop="{{item.attr.loop != undefined ? true : false}}"
+            poster="{{item.attr.poster}}" style="width:100%;height:{{(WIN_WIDTH - padding * 2) / item.attr.width * item.attr.height}}px" data-type="video" data-id="{{item.attr.id ? item.attr.id : Util.md5(item.attr.src)}}" bindplay="videoPlay" bindpause="videoPause"
+            bindended="videoPause"></video>
+        <template is="video-cover" data="{{type:'video', id:item.attr.id ? item.attr.id : Util.md5(item.attr.src), poster:item.attr.poster}}"></template>
+    </view>
+</template>
+
+<template name="wxmlTXVideo">
+    <view class="{{item.attr.class}} wxml-txvideo media-wrapper {{playingVideos[item.attr.vid] ? 'playing' : ''}}" style="{{item.attr.style}}">
+        <txvideo vid="{{item.attr.vid}}" playerid="{{item.attr.vid}}" width="100%" height="{{(WIN_WIDTH - padding * 2) / item.attr.width * item.attr.height}}px" isHiddenStop="{{true}}" isNeedMutex="{{false}}" usePoster="{{true}}" data-type="txvideo" data-id="{{item.attr.vid}}"
+            bindplay="videoPlay" bindpause="videoPause" bindended="videoPause"></txvideo>
+        <template is="video-cover" data="{{type:'txvideo', id:item.attr.vid, poster:item.attr.poster, duration:item.attr.duration}}"></template>
+    </view>
+</template>
+
+<template name="wxmlAudio">
+    <view class="{{item.attr.class}} wxml-audio" style="{{item.attr.style}}">
+        <audio class="{{item.attr.class}}" src="{{item.attr.src}}" controls="{{item.attr.controls != undefined ? true : false}}" loop="{{item.attr.loop != undefined ? true : false}}" poster="{{item.attr.poster}}" name="{{item.attr.name}}" author="{{item.attr.author}}"></audio>
+    </view>
+</template>
+
+<template name="wxmlImg">
+    <block wx:if="{{item.attr.width && item.attr.height && item.attr['w2w-donot-lazyload'] != 'true'}}">
+        <lazy-image src="{{item.attr.src}}" dynamic-width="{{item.attr['w2w-lazyload-fullwidth'] == 'false' ? false : true}}" width="{{item.attr.width}}" height="{{item.attr.height}}" img-style="{{item.attr.style}}" data-src="{{item.attr.src}}" data-idx="{{Util.md5(item.attr.src)}}"
+            catchtap="{{item.attr['w2w-donot-preview'] != 'true' ? 'wxmlImgTap' : ''}}" bindload="wxmlImgLoad" />
+    </block>
+    <block wx:else>
+        <image class="{{item.attr.class}} wxml-img" data-src="{{item.attr.src}}" src="{{item.attr.src}}" data-idx="{{Util.md5(item.attr.src)}}" bindload="wxmlImgLoad" catchtap="{{item.attr['w2w-donot-preview'] != 'true' ? 'wxmlImgTap' : ''}}" mode="widthFix"
+            style="width:{{images[Util.md5(item.attr.src)].width}}px;{{item.attr.style}}" />
+    </block>
+</template>
+
+<template name="wxmlProduct">
+    <view class="wxml-product" data-id="{{item.attr.id}}" bindtap="productTap">
+        <lazy-image class="wxml-product-image" src="{{item.attr.image}}" mode="aspectFill" />
+        <view class="wxml-product-detail">
+            <view>
+                <view class="wxml-product-title ellipsis">{{item.attr.title}}</view>
+                <view class="wxml-product-desc ellipsis">{{item.attr.desc}}</view>
+            </view>
+            <view class="wxml-product-price-wrapper">
+                <block wx:if="{{item.attr.price != ''}}">
+                    <view class="wxml-product-price">
+                        <text class="currency">{{item.attr.currency}}</text>
+                        <text class="price">{{item.attr.price}}</text>
+                    </view>
+                    <view class="wxml-product-regular-price">
+                        <text class="currency">{{item.attr.currency}}</text>
+                        <text class="price">{{item.attr.regular_price}}</text>
+                    </view>
+                </block>
+                <block wx:else>
+                    <view class="wxml-product-price">
+                        <text class="currency">{{item.attr.currency}}</text>
+                        <text class="price">{{item.attr.regular_price}}</text>
+                    </view>
+                </block>
+            </view>
+            <image class="wxml-product-cart" src="/images/cart_light_main_color.svg"></image>
+        </view>
+    </view>
+</template>
+
+<template name="wxmlPost">
+    <view class="wxml-post" data-id="{{item.attr.id}}" bindtap="postTap">
+        <lazy-image class="wxml-post-image" src="{{item.attr.image}}" mode="aspectFill" />
+        <view class="wxml-post-detail">
+            <view>
+                <view class="wxml-post-title ellipsis">{{item.attr.title}}</view>
+                <view class="wxml-product-desc ellipsis">{{item.attr.desc}}</view>
+            </view>
+            <image class="wxml-post-link" src="/images/link.svg"></image>
+        </view>
+    </view>
+</template>
+
+<template name="wxmlLiType">
+    <view class="wxml-li-type">
+        <view class="{{item.attr.class}} {{type != 'number' ? 'wxml-li-' + type : ''}}">{{type === 'number' ? idx + 1 + '. ' : ''}}</view>
+    </view>
+</template>
+
+<!-- 入口 -->
+
+<view class="html2wxml hljs-style-{{highlightStyle}}">
+    <block wx:if="{{nodes == undefined}}">
+        <view wx:if="{{showLoading}}" style="padding:20px 0;width:100%;display:flex;justify-content:center;align-items:center">
+            <image class="loading" src="./images/loading.png"></image>
+        </view>
+    </block>
+    <block wx:else>
+        <block wx:for="{{nodes}}" wx:key="key">
+            <template is="wxml0" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+        </block>
+    </block>
+</view>
+
+<!-- 循环模版 -->
+
+<template name="wxml0">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml1" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml1" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml1" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml1" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml1" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml1" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml1" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml1">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml2" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml2" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml2" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml2" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml2" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml2" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml2" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml2">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml3" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml3" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml3" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml3" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml3" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml3" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml3" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml3">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml4" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml4" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml4" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml4" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml4" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml4" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml4" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml4">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml5" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml5" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml5" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml5" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml5" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml5" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml5" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml5">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml6" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml6" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml6" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml6" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml6" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml6" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml6" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml6">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml7" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml7" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml7" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml7" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml7" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml7" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml7" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml7">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml8" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml8" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml8" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml8" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml8" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml18" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml8" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml8">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml9" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml9" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml9" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml9" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml9" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml9" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml9" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml9">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml10" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml10" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml10" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml10" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml10" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml10" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml10" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml10">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml11" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml11" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml11" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml11" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml11" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml11" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml11" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml11">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml12" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml12" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml12" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml12" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml12" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml12" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml12" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml12">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml13" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml13" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml13" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml13" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml13" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml13" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml13" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml13">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml14" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml14" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml14" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml14" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml14" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml14" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml14" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml14">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml15" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml15" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml15" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml15" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml15" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml15" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml15" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>
+
+<!-- 循环模版 -->
+
+<template name="wxml15">
+    <!-- button 类型 -->
+    <block wx:if="{{item.tag == 'button'}}">
+        <button type="default" size="mini">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml16" data="{{images, item}}" />
+            </block>
+        </button>
+    </block>
+    <!-- ul类型 -->
+    <block wx:elif="{{item.tag == 'ul'}}">
+        <view class="{{item.attr.class}} wxml-ul wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml16" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'circle'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- ol类型 -->
+    <block wx:elif="{{item.tag == 'ol'}}">
+        <view class="{{item.attr.class}} wxml-ol wxml-block" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml16" data="{{images, item, type:item.listtype != undefined ? item.listtype : 'number'}}" />
+            </block>
+        </view>
+    </block>
+    <!-- li类型 -->
+    <block wx:elif="{{item.tag == 'li'}}">
+        <view class="{{item.attr.class}} wxml-li" style="{{item.attr.style}}">
+            <template is="wxmlLiType" data="{{item, idx:item.idx, type:type}}" />
+            <view class="{{item.attr.class}} wxml-li-text">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml16" data="{{images, item}}" />
+                </block>
+            </view>
+        </view>
+    </block>
+    <!-- a类型 -->
+    <block wx:elif="{{item.tag == 'a'}}">
+        <view bindtap="wxmlTagATap" class="wxml-inline {{item.attr.class}} wxml-a" data-src="{{item.attr.href}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml16" data="{{images, item}}" />
+            </block>
+        </view>
+    </block>
+    <!-- video类型 -->
+    <block wx:elif="{{item.tag == 'video'}}">
+        <template is="wxmlVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- txvideo类型 -->
+    <block wx:elif="{{item.tag == 'w2w-txvideo'}}">
+        <template is="wxmlTXVideo" data="{{item, WIN_WIDTH, padding, playingVideos}}" />
+    </block>
+    <!-- audio类型 -->
+    <block wx:elif="{{item.tag == 'audio'}}">
+        <template is="wxmlAudio" data="{{item}}" />
+    </block>
+    <!-- img类型 -->
+    <block wx:elif="{{item.tag == 'img'}}">
+        <template is="wxmlImg" data="{{images, item}}" />
+    </block>
+    <!-- w2w-product类型 -->
+    <block wx:elif="{{item.tag == 'w2w-product'}}">
+        <template is="wxmlProduct" data="{{item}}" />
+    </block>
+    <!-- w2w-post类型 -->
+    <block wx:elif="{{item.tag == 'w2w-post'}}">
+        <template is="wxmlPost" data="{{item}}" />
+    </block>
+    <!-- w2w-coupon类型 -->
+    <block wx:elif="{{item.tag == 'w2w-coupon'}}">
+        <block wx:if="{{item.attr.amount}}">
+            <template is="coupon" data="{{item:item.attr}}"></template>
+        </block>
+        <block wx:else>
+            <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}" data-code="{{item.attr.code}}" bindtap="receiveCoupon">
+                <block wx:for="{{item.nodes}}" wx:key="key">
+                    <template is="wxml16" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+                </block>
+            </view>
+        </block>
+    </block>
+    <!-- 纯文本类型 -->
+    <block wx:elif="{{item.tag == '#text'}}">
+        <text>{{item.text}}</text>
+    </block>
+    <block wx:elif="{{item.tag == 'br'}}">
+        <text>\n</text>
+    </block>
+    <!-- 其他类型 -->
+    <block wx:else>
+        <view class="{{item.attr.class}} wxml-{{item.tag}} wxml-{{item.type}}" style="{{item.attr.style}}">
+            <block wx:for="{{item.nodes}}" wx:key="key">
+                <template is="wxml16" data="{{images, item, WIN_WIDTH, padding, playingVideos}}" />
+            </block>
+        </view>
+    </block>
+</template>

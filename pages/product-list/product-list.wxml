@@ -1,0 +1,209 @@
+<!--pages/product-list/product-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/vendor/ZanUI/loadmore/index.wxml" />
+<import src="/vendor/ZanUI/toptips/index.wxml" />
+<import src="/templates/product-list-flat.wxml" />
+<import src="/templates/login-popup.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view wx:if="{{products != null}}" class="container {{isFilterOrderby ? 'container-filter-orderby' : ''}}">
+
+    <view wx:if="{{!isFilterOrderby || (isFilterOrderby && orderby)}}" class="top-bar" style="padding-top:{{NAV_HEIGHT}}">
+        <!-- 搜索栏开始 -->
+        <view class="search-wrapper {{(showSearchHistory && history.length > 0) || showCategoryList ? 'show' : ''}}">
+            <view class="search">
+                <image class="search-icon" src="/images/search_gray.svg"></image>
+                <input class="search-input" placeholder-class="input-placeholde-gray input-placeholder-small" placeholder="搜索产品" value="{{searchInputValue}}" confirm-type="search" bindconfirm="searchSubmit" bindinput="searchInput" bindfocus="searchInputFocus"></input>
+                <image wx:if="{{searchInputValue != ''}}" class="search-close" src="/images/close.svg" bindtap="clearSearch"></image>
+            </view>
+            <view class="category" bindtap="toggleCategoryList">
+                <image class="category-icon" src="/images/category.svg"></image>
+            </view>
+            <view class="category-list {{showCategoryList ? 'show' : ''}}">
+                <view class="category-list-l1 {{!currentCategory ? 'full' : ''}}">
+                    <scroll-view scroll-y="{{true}}">
+                        <block wx:for="{{categories}}" wx:key="key">
+                            <view wx:if="{{item.parent == 0}}" class="category-item {{currentCategory == item.id || currentParentCategory == item.id ? 'active' : ''}}" data-id="{{item.id}}" data-parent="{{item.parent}}" bindtap="categoryChange">
+                                <image class="category-image" src="{{item.image ? item.image : '/images/placeholder.png'}}"></image>
+                                <text class="category-name">{{item.name}}</text>
+                            </view>
+                        </block>
+                    </scroll-view>
+                </view>
+                <view wx:if="{{currentCategory}}" class="category-list-l2">
+                    <scroll-view scroll-y="{{true}}">
+                        <block wx:for="{{categories}}" wx:key="key">
+                            <view wx:if="{{item.parent == currentCategory || (currentParentCategory != 0 && item.parent == currentParentCategory)}}" class="category-item {{currentCategory == item.id ? 'active' : ''}}" data-id="{{item.id}}" data-parent="{{item.parent}}" bindtap="categoryChange">
+                                <image class="category-image" src="{{item.image ? item.image : '/images/placeholder.png'}}"></image>
+                                <text class="category-name">{{item.name}}</text>
+                            </view>
+                        </block>
+                    </scroll-view>
+                </view>
+                <view class="category-actions">
+                    <view class="category-action category-cancel" bindtap="cancelCategorySelect">取消</view>
+                    <view class="category-action category-confirm" bindtap="confirmCategorySelect">确定</view>
+                </view>
+            </view>
+            <view class="search-history {{showSearchHistory && history.length > 0 ? 'show' : ''}}">
+                <block wx:for="{{history}}" wx:key="key">
+                    <view class="history">
+                        <text class="search-keyword" data-keyword="{{item}}" bindtap="goSearch" bindlongpress="openSearchActionPopup">{{item}}</text>
+                        <view class="actions">
+                            <image src="/images/top_left_arrow.svg" data-keyword="{{item}}" bindtap="pushToSeachIuput"></image>
+                        </view>
+                    </view>
+                </block>
+                <view class="delete-all" bindtap="clearHistory">
+                    <image src="/images/delete_light.svg"></image>
+                    <text>清空搜索历史</text>
+                </view>
+            </view>
+        </view>
+        <view class="search-mask {{(showSearchHistory && history.length > 0) || showCategoryList ? 'show' : ''}}" bindtap="closeSearch"></view>
+        <!-- 搜索栏结束 -->
+
+        <!-- W2W Extension, Name: w2w-products-filter-and-orderby, Code: filterBar -->
+        <!-- 产品筛选和排序栏开始 -->
+        <view wx:if="{{orderby}}" class="filter-orderby-bar">
+            <view class="orderby">
+                <scroll-view scroll-x="{{true}}">
+                    <view class="orderby-scroll">
+                        <block wx:for="{{orderby.items}}" wx:key="key">
+                            <view class="orderby-item {{index == orderby.default.orderby ? 'active' : ''}}" style="width:{{orderby.items.length <= 3 ? '33.3333333333' : '25'}}%" data-orderby="{{index}}" bindtap="changeOrderby">
+                                <text>{{item.label}}</text>
+                                <view wx:if="{{item.default_order !== false}}" class="arrow">
+                                    <view wx:if="{{item.default_order != ''}}" class="arrow-up {{index == orderby.default.orderby && orderby.default.order == 'asc' ? 'active' : ''}}"></view>
+                                    <view class="arrow-down {{index == orderby.default.orderby && ( orderby.default.order == 'desc' || item.default_order == '' ) ? 'active' : ''}}"></view>
+                                </view>
+                            </view>
+                        </block>
+                    </view>
+                </scroll-view>
+            </view>
+            <view class="open-filter" bindtap="openFilterPopup">
+                <image src="/images/filter.svg"></image>
+                <text>筛选</text>
+            </view>
+        </view>
+        <!-- 产品筛选和排序栏结束 -->
+        <!-- W2W Extension, Name: w2w-products-filter-and-orderby, Code: filterBar -->
+    </view>
+
+    <!-- 侧边按钮开始 -->
+    <!-- W2W Extension, Name: w2w-products-favor, Code: editFavorBtn -->
+    <button wx:if="{{inEdit && selectedProducts.length > 0}}" class="btn side-btn delete-favor-btn" bindtap="deleteFavor">
+        <image src="/images/delete_light.svg"></image>
+    </button>
+    <button wx:if="{{options.favor == 'true'}}" class="btn side-btn edit-favor-btn {{inEdit ? 'in-edit' : ''}}" bindtap="switchEditFavor">
+        <image src="/images/{{inEdit ? 'check_white.svg' : 'edit.svg'}}"></image>
+    </button>
+    <!-- W2W Extension, Name: w2w-products-favor, Code: editFavorBtn -->
+    <button class="btn side-btn cart-btn" bindtap="goCart">
+        <image src="/images/cart_light.svg"></image>
+        <text class="cart-quantity">{{cart_quantity}}</text>
+    </button>
+    <button class="btn side-btn go-top-btn" bindtap="goTop">
+        <image src="/images/top_light.svg"></image>
+    </button>
+    <!-- 侧边按钮结束 -->
+
+    <block wx:if="{{bottomStyle == 'empty'}}">
+        <view class="empty-product center">
+            <text>还没有相关产品</text>
+        </view>
+    </block>
+    <block wx:else>
+        <template wx:if="{{products.length > 0}}" is="product-list-flat" data="{{inEdit, selectedProducts, products, currency}}"></template>
+        <template wx:if="{{bottomStyle == 'nomore'}}" is="zan-loadmore" data="{{nomore:true}}"></template>
+    </block>
+
+    <!-- W2W Extension, Name: w2w-products-filter-and-orderby, Code: filterPopup -->
+    <!-- 筛选弹窗开始 -->
+    <view class="zan-popup zan-popup--right filter-popup {{isFilterPopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeFilterPopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container" style="padding-top:{{NAV_HEIGHT}}">
+            <view class="filter-group-wrapper">
+                <view class="title">筛选</view>
+
+                <block wx:for="{{filter}}" wx:for-item="filterItem" wx:for-index="filterTax" wx:key="key">
+                    <!-- 价格筛选开始 -->
+                    <block wx:if="{{filterTax == 'price'}}">
+                        <view class="filter-group">
+                            <view class="filter-group-title">{{filterItem.label}}</view>
+                            <view class="filter-attr-wrapper">
+                                <ui-slider value="{{priceFilterValue}}" min="{{filterItem.min_price}}" max="{{filterItem.max_price}}" step="{{filterItem.step}}" width="{{popupWidth - 20}}" container-width="{{popupWidth}}" thumb-size="15" unlimited="{{true}}" thumb-down-style="{{thumbDownStyle}}"
+                                    active-color="{{mainColor}}" bindchange="priceRangeChange"></ui-slider>
+                            </view>
+                        </view>
+                    </block>
+                    <!-- 价格筛选结束 -->
+
+                    <!-- 特色促销筛选开始 -->
+                    <block wx:elif="{{filterTax == 'featured_and_onsale'}}">
+                        <view class="filter-group">
+                            <view class="filter-group-title">{{filterItem.label}}</view>
+                            <view class="filter-attr-wrapper">
+                                <block wx:for="{{filterItem.items}}" wx:key="key">
+                                    <view class="filter-attr-item {{currentFeaturedFilter[item] ? 'active' : ''}}" data-attr="{{item}}" bindtap="selectFeaturedFilterItem">
+                                        <image class="filter-attr-image" src="{{item == 'featured' ? '/images/favor_fill.svg' : '/images/sale_fill.svg'}}"></image>
+                                        <text>{{item == 'featured' ? '特色' : '促销'}}</text>
+                                    </view>
+                                </block>
+                            </view>
+                        </view>
+                    </block>
+                    <!-- 特色促销筛选结束 -->
+
+                    <!-- 属性筛选开始 -->
+                    <block wx:else>
+                        <view class="filter-group">
+                            <view class="filter-group-title">{{filterItem.label}}</view>
+                            <view class="filter-attr-wrapper">
+                                <block wx:for="{{filterItem.items}}" wx:for-item="attrItem" wx:key="key">
+                                    <view class="filter-attr-item {{currentFilter[filterTax][attrItem.slug] ? 'active' : ''}}" data-tax="{{filterTax}}" data-attr="{{attrItem.slug}}" bindtap="selectFilterItem">
+                                        <text wx:if="{{filterTax == 'color'}}" class="filter-attr-color" style="background-color: {{(Util.isHexColor(attrItem.slug) ? '#' : '') + attrItem.slug}}"></text>
+                                        <text>{{attrItem.label}}</text>
+                                    </view>
+                                </block>
+                            </view>
+                        </view>
+                    </block>
+                    <!-- 属性筛选结束 -->
+                </block>
+
+            </view>
+            <view class="actions">
+                <button class="reset" bindtap="resetFilter">重置</button>
+                <button class="confirm" bindtap="confirmFilter">确定</button>
+            </view>
+        </view>
+    </view>
+    <!-- 筛选弹窗结束 -->
+    <!-- W2W Extension, Name: w2w-products-filter-and-orderby, Code: filterPopup -->
+
+    <template is="login-popup" data="{{show: isLoginPopup, userInfo}}"></template>
+    <template is="zan-toptips" data="{{ zanTopTips, top: NAV_HEIGHT }}"></template>
+</view>
+
+<wxs module="Util">
+    var isHexColor = function(str) {
+        var regex = getRegExp('^([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$');
+        return regex.test(str);
+    }
+    module.exports.isHexColor = isHexColor;
+</wxs>

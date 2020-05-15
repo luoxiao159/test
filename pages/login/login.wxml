@@ -1,0 +1,37 @@
+<!--pages/login/login.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view class="container">
+    <view class="main">
+        <view class="header thin-border thin-border-bottom">
+            <open-data class="avatar" type="userAvatarUrl"></open-data>
+            <open-data class="name" type="userNickName"></open-data>
+        </view>
+        <view class="middle">
+            <view class="text-main">
+                <image class="logo" src="{{logo}}"></image>
+                <text>{{name}}</text>
+            </view>
+            <view class="text-sub">获得你的公开信息（昵称、头像、地区及性别）</view>
+        </view>
+    </view>
+    <button class="login-btn" open-type="getUserInfo" bindgetuserinfo="getUserInfo">
+        <image src="/images/wechat_white.svg"></image>
+        <text>微信一键授权</text>
+    </button>
+</view>

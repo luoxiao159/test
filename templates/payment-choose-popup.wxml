@@ -1,0 +1,29 @@
+<!--templates/payment-choose-popup.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="payment-choose-popup">
+    <view class="zan-popup zan-popup--center payment-choose-popup {{show ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closePaymentChoosePopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <view class="payment-choose-popup-wrapper">
+                <text class="payment-choose-label">请选择支付方式</text>
+                <view class="payment-choose">
+                    <view class="payment-item" data-index="{{popupOrder.index}}" data-id="{{popupOrder.id}}" bindtap="makeWeChatPayment">
+                        <image class="payment-logo" src="/images/payment-wxapay.svg"></image>
+                        <text class="payment-label">微信支付</text>
+                    </view>
+                    <view class="payment-item "data-index="{{popupOrder.index}}" data-id="{{popupOrder.id}}" bindtap="showCopyPayURL">
+                        <image class="payment-logo" src="/images/payment-other.svg"></image>
+                        <text class="payment-label">其它支付方式</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>

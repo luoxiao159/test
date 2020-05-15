@@ -1,0 +1,107 @@
+<!--pages/index/index.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/vendor/ZanUI/toptips/index.wxml" />
+<import src="/vendor/ZanUI/noticebar/index.wxml" />
+<import src="/templates/product-list-flat.wxml" />
+<import src="/templates/login-popup.wxml" />
+<import src="/templates/nav-bar.wxml" />
+<import src="/templates/coupon.wxml" />
+<import src="/templates/index.wxml" />
+<import src="/vendor/modules/modules.wxml" />
+
+<view class="container home">
+    
+
+    <block wx:if="{{contentType != 'module' && banner != null}}">
+        <nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+            <view slot="content" class="nav-bar-wrapper-wrap">
+                <template is="nav-bar" data="{{pageTitle, backBtn: false}}"></template>
+            </view>
+            <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+        </nav-bar>
+
+        <!-- 站点公告开始 -->
+        <template wx:if="{{notice != null}}" is="zan-noticebar" data="{{ text: notice, componentId: 'noticebar', animationData:noticebar.animationData }}"></template>
+        <!-- 站点公告结束 -->
+
+        <!-- 搜索栏开始 -->
+        <template is="search"></template>
+        <!-- 搜索栏结束 -->
+
+        <!-- Banner开始 -->
+        <template is="banner" data="{{mIndex: 0, banner, imgWidth, bannerSettings}}"></template>
+        <!-- Banner结束 -->
+
+        <!-- 文章开始 -->
+        <template is="posts" data="{{posts, currentPost}}"></template>
+        <!-- 文章结束 -->
+
+        <!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCoupons -->
+        <!-- 优惠券开始 -->
+        <view style="margin: 10px 0">
+            <template is="coupons" data="{{coupons, currency}}"></template>
+        </view>
+        <!-- 优惠券结束 -->
+        <!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCoupons -->
+
+        <!-- 精选产品开始 -->
+        <view style="margin-top: 10px;">
+            <template is="title" data="{{title: '精选产品'}}"></template>
+        </view>
+        <template is="product-list-flat" data="{{products: featured_products, currency}}"></template>
+        <!-- 精选产品结束 -->
+
+        <!-- 最新产品开始 -->
+        <view style="margin-top: 20px;">
+            <template is="title" data="{{title: '最新产品'}}"></template>
+        </view>
+        <template is="product-list-flat" data="{{products: lastest_products, currency}}"></template>
+        <template is="button" data="{{url: '/pages/product-list/product-list', text: '所有产品'}}"></template>
+        <!-- 最新产品结束 -->
+    </block>
+    <block wx:elif="{{contentType == 'module'}}">
+        <block wx:if="{{modules}}">
+            <template is="modules" data="{{modules, currency, pageTitle, navBarTheme, noticebar, menuListShow, currentPost, mapMarkerStyle, isModulePopup, imgWidth, bannerSettings, NAV_HEIGHT, NAV_BAR_HEIGHT, STATUS_BAR_HEIGHT, PIXEL_RATIO}}" />
+        </block>
+        <view wx:elif="{{rending}}" class="center loading">
+            <loading />
+            <text>请稍候</text>
+        </view>
+    </block>
+
+    <button wx:if="{{goTopShow}}" class="btn side-btn side-btn-card go-top-btn" bindtap="goTop">
+        <image src="/images/top_light.svg"></image>
+    </button>
+
+    <!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponPopup -->
+    <!-- 领券弹窗开始 -->
+    <view class="zan-popup zan-popup--center coupon-popup {{isCouponPopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeCouponPopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <view class="coupon-popup-wrapper" data-code="{{couponPopup.code}}" bindtap="goToUseCoupon">
+                <view class="coupon-popup-background">
+                    <image class="coupon-popup-background-image" src="/images/coupon-popup.svg" mode="widthFix"></image>
+                    <view class="coupon-popup-detail">
+                        <view class="coupon-popup-title">恭喜你获得</view>
+                        <view class="coupon-popup-content">{{couponPopup.description}}</view>
+                    </view>
+                    <image class="coupon-popup-logo" src="{{couponLogo}}"></image>
+                    <image class="coupon-popup-close" src="/images/close_white.svg" catchtap="closeCouponPopup"></image>
+                </view>
+                <view class="go-coupon-products">立即使用</view>
+            </view>
+        </view>
+    </view>
+    <!-- 领券弹窗结束 -->
+    <!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponPopup -->
+
+    <template is="login-popup" data="{{show: isLoginPopup, userInfo}}"></template>
+    <template is="zan-toptips" data="{{ zanTopTips, top: NAV_HEIGHT }}"></template>
+</view>

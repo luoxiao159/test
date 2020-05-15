@@ -1,0 +1,107 @@
+<!--pages/order-review-post/order-review-post.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view wx:if="{{order != null}}" class="container order-review-list">
+    <view class="cart-list">
+        <block wx:for="{{order.line_items}}" wx:if="{{item.id == itemID}}" wx:key="key">
+
+            <view class="cart-item">
+                <view class="product-image">
+                    <image src="{{item.image[0].single.url}}" mode="widthFix"></image>
+                </view>
+                <view class="cart-detail-wrapper">
+                    <view class="cart-detail">
+                        <text class="product-title">{{item.name}}</text>
+                        <!-- 已选属性 -->
+                        <view wx:if="{{item.meta.length > 0}}" class="choose-wrapper">
+                            <block wx:for="{{item.meta}}" wx:key="key">
+                                <text>{{item.value}}</text>
+                            </block>
+                        </view>
+                    </view>
+                </view>
+                <view class="cart-item-price">
+                    <view class="line-total">
+                        <text class="currency">{{currency}}</text>
+                        <text class="price">{{item.subtotal}}</text>
+                    </view>
+                </view>
+            </view>
+
+        </block>
+    </view>
+
+    <form report-submit="{{true}}">
+        <view class="review">
+            <view class="review-rate">
+                <view class="review-rate-inner">
+                    <text class="review-rate-text">评价</text>
+                    <block wx:for="{{5}}" wx:key="key">
+                        <image class="review-rate-image" src="/images/{{item <= rate ? 'favor_fill_light.svg' : 'favor_empty_light.svg'}}" data-rate="{{item}}" bindtap="rateChange"></image>
+                    </block>
+                </view>
+                <view wx:if="{{rate != undefined}}" class="review-rate-result">
+                    <text>{{reviewText[rate]}}</text>
+                    <image src="/images/rate-{{rate}}.svg"></image>
+                </view>
+            </view>
+            <view class="review-content">
+                <textarea name="content" placeholder="{{reviewPlaceholder[rate] || reviewPlaceholder[4]}}" placeholder-class="input-placeholder-gray" maxlength="-1" auto-height="{{true}}" data-name="content" bindinput="reviewInput" bindblur="inputBlur"></textarea>
+                <view class="content-length {{contentLength > 500 ? 'over' : ''}}">
+                    <view wx:if="{{contentLength > 400}}">
+                        <text>{{contentLength}}</text>/500
+                    </view>
+                </view>
+            </view>
+            <view class="review-images {{uploading ? 'uploading' : ''}}">
+                <block wx:for="{{selectedImages}}" wx:key="key">
+                    <view class="image">
+                        <image src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="previewImage"></image>
+                        <view class="remove">
+                            <image src="/images/close_white.svg" data-index="{{index}}" bindtap="removeImage"></image>
+                        </view>
+                        <view class="progress">
+                            <block wx:if="{{progress[index] == undefined}}">
+                                <icon type="waiting" size="20" color="#fff" />
+                            </block>
+                            <block wx:elif="{{progress[index] == false}}">
+                                <view class="icon error">
+                                    <image src="/images/warn.svg"></image>
+                                </view>
+                            </block>
+                            <block wx:elif="{{progress[index] == 100}}">
+                                <view class="icon success">
+                                    <image src="/images/check_white.svg"></image>
+                                </view>
+                            </block>
+                            <block wx:else>
+                                <view class="progress-bar">
+                                    <view class="progress-inner" style="width: {{progress[index]}}%"></view>
+                                </view>
+                            </block>
+                        </view>
+                    </view>
+                </block>
+                <view wx:if="{{selectedImages.length < uploadImagesLimit}}" class="select-image" bindtap="selectImage">
+                    <image src="/images/camera.svg"></image>
+                </view>
+            </view>
+        </view>
+        <button class="submit btn-primary" form-type="submit" bindtap="reviewSubmit">提交</button>
+    </form>
+</view>

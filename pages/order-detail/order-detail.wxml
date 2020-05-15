@@ -1,0 +1,374 @@
+<!--pages/order-detail/order-detail.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/templates/order-cart-list.wxml" />
+<import src="/templates/account-details.wxml" />
+<import src="/templates/payment-choose-popup.wxml" />
+<import src="/templates/groupon-members.wxml" />
+<import src="/templates/login-popup.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view wx:if="{{order}}" class="container order-detail">
+
+    <!-- 好友查看代付订单开始 -->
+    <block wx:if="{{options.paybyfriend_token}}">
+        <view class="paybyfriend">
+            <view class="main">
+                <view class="user">
+                    <image class="user-avatar" src="{{order.user_avatar}}"></image>
+                    <view class="user-info">
+                        <view class="username">{{order.user_name}}</view>
+                        <view class="user-text">{{order.current_user_paid ? '“谢谢你帮我付款！”' : '“我看中了这件宝贝，快来帮我付款吧~我会感谢你的”'}}</view>
+                    </view>
+                </view>
+                <view class="detail block">
+                    <view class="total">
+                        <view class="total-text">代付金额</view>
+                        <view class="total-value product-price">
+                            <text class="currency">{{currency}}</text>
+                            <text>{{order.total}}</text>
+                        </view>
+                    </view>
+                    <template is="order-cart-list" data="{{line_items: order.line_items, currency, disableNaviToProduct: true}}"></template>
+                </view>
+                <view class="note block">
+                    <view class="line">代付说明</view>
+                    <view class="line">1. 付款前务必和好友再次确认，避免遇到诈骗行为</view>
+                    <view class="line">2. 如发生退款，将原路退回付款人</view>
+                    <view class="line">3. 付款金额以当前页面为准</view>
+                </view>
+            </view>
+            <block wx:if="{{order.status == 'pending'}}">
+                <button class="pay-button btn btn-primary" bindtap="payByFriend">
+                    <image class="button-icon" src="/images/like_light.svg"></image>
+                    <text>慷慨付款</text>
+                </button>
+            </block>
+            <block wx:else>
+                <button class="pay-button btn btn-primary disabled">
+                    <text>{{order.current_user_paid ? '你已付款' : '订单已失效或他人已支付'}}</text>
+                </button>
+            </block>
+        </view>
+    </block>
+    <!-- 好友查看代付订单结束 -->
+
+    <!-- 正常查看订单开始 -->
+    <block wx:else>
+        <!-- 订单状态开始 -->
+        <view class="order-status">
+            <text>{{order.status_name}}</text>
+        </view>
+        <!-- 订单状态结束 -->
+
+        
+
+        <!-- 银行账户详情开始 -->
+        <block wx:if="{{order.payment_method == 'bacs_china' && order.status == 'on-hold'}}">
+            <template is="account-details-bacs-china" data="{{order}}"></template>
+        </block>
+        <block wx:if="{{order.payment_method == 'bacs' && order.status == 'on-hold'}}">
+            <template is="account-details-bacs" data="{{order}}"></template>
+        </block>
+
+        <!-- 银行账户详情结束 -->
+
+        <!-- 物流信息开始 -->
+        <view wx:if="{{order.shipper != ''}}" class="order-shipping popup-btn" bindtap="goShippingDetail">
+            <view class="icon">
+                <image src="/images/deliver_light.svg"></image>
+            </view>
+            <view class="button-main">
+                <!-- 有物流信息则显示最新一条信息 -->
+                <block wx:if="{{order.shipping_detail.shipping.length > 0}}">
+                    <view class="shipping-detail">
+                        <text>{{order.shipping_detail.shipping[0].AcceptStation}}</text>
+                    </view>
+                    <view class="time">
+                        <text>{{order.shipping_detail.shipping[0].AcceptTime}}</text>
+                    </view>
+                </block>
+                <!-- 无物流信息则显示物流公司和单号 -->
+                <block wx:else>
+                    <view class="shipper">
+                        <view class="shipper-icon">
+                            <image src="/images/shipper-{{order.shipper.shipper_slug}}.png"></image>
+                        </view>
+                        <view class="shipper-detail">
+                            <view class="name">
+                                <text>{{order.shipper.shipper_name}}</text>
+                            </view>
+                            <view class="code">
+                                <text>{{order.shipper.code}}</text>
+                            </view>
+                        </view>
+                    </view>
+                </block>
+            </view>
+            <view class="go-shipping-detail">
+                <image src="/images/go_light.svg"></image>
+            </view>
+        </view>
+        <!-- 物流信息结束 -->
+
+        <!-- 收货地址开始 -->
+        <view class="select-address popup-btn block">
+            <view class="icon">
+                <image src="/images/location_light.svg"></image>
+            </view>
+            <view class="button-main">
+                <view class="customer-info">
+                    <text>{{order.billing.first_name}}</text>
+                    <text>{{order.billing.phone}}</text>
+                </view>
+                <view class="address">
+                    <block wx:if="{{province == ''}}">
+                        <text>{{order.billing.country_label}}</text>
+                        <text>{{order.billing.state_label}}</text>
+                    </block>
+                    <block wx:else>
+                        <text>{{province}}</text>
+                    </block>
+                    <text>{{order.billing.city}}</text>
+                    <text>{{order.billing.address_1}}</text>
+                </view>
+            </view>
+        </view>
+        <!-- 收货地址结束 -->
+
+        <!-- 买家留言开始 -->
+        <view wx:if="{{order.customer_note != ''}}" class="order-comment">
+            <view class="icon">
+                <image src="/images/comment_light.svg"></image>
+            </view>
+            <view>{{order.customer_note}}</view>
+        </view>
+        <!-- 买家留言结束 -->
+
+        <!-- 商家留言开始 -->
+        <view wx:if="{{order.manager_notes.length > 0}}" class="manager-comment">
+            <view class="icon">
+                <image src="/images/about.svg"></image>
+            </view>
+            <view class="comment-list">
+                <block wx:for="{{order.manager_notes}}" wx:key="key">
+                    <view class="comment">
+                        <text class="comment-text">{{item.comment_content}}</text>
+                        <text class="comment-date">{{item.comment_date}}</text>
+                    </view>
+                </block>
+            </view>
+        </view>
+        <!-- 商家留言结束 -->
+
+        <!-- W2W Extension, Name: w2w-products-groupon, Code: groupOrderDetail -->
+        <!-- 拼团详情开始 -->
+        <view wx:if="{{order.groupon && order.groupon.is_grouped_on}}" class="groupon popup-btn block" bindtap="{{order.groupon.is_success || order.groupon.is_grouped_on || order.groupon.is_expired ? 'goGrouponResult' : ''}}">
+            <view class="button-main">
+                <view class="groupon-main">
+                    <view class="groupon-icon">
+                        <image src="/images/groupon_light.svg"></image>
+                    </view>
+                    <view class="groupon-info">
+                        <block wx:if="{{order.groupon.dismiss}}">
+                            <text>拼团已解散</text>
+                        </block>
+                        <block wx:elif="{{order.groupon.is_success}}">
+                            <text>拼团成功，{{order.groupon.groupon_success}} 已达成</text>
+                        </block>
+                        <block wx:elif="{{order.groupon.is_expired}}">
+                            <text>已结束，拼团失败</text>
+                        </block>
+                        <block wx:elif="{{order.groupon.is_grouped_on}}">
+                            <text>拼单中，还差{{order.groupon.member_remain}}人{{grouponCountDown ? '，剩余 ' + grouponCountDown.hours + ':' + grouponCountDown.minutes + ':' + grouponCountDown.seconds : ''}}</text>
+                        </block>
+                        <block wx:else>
+                            <text>订单{{order.status_name}}</text>
+                        </block>
+                    </view>
+                </view>
+                <view class="groupon-members-wrapper">
+                    <template is="groupon-members" data="{{groupon: order.groupon}}"></template>
+                    <view wx:if="{{order.groupon.is_success || order.groupon.is_grouped_on || order.groupon.is_expired}}" class="go-popup">
+                        <image src="/images/go_light.svg"></image>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <!-- 拼团详情结束 -->
+        <!-- W2W Extension, Name: w2w-products-groupon, Code: groupOrderDetail -->
+
+        <!-- 购物车列表开始 -->
+        <template is="order-cart-list" data="{{line_items: order.line_items, currency}}"></template>
+        <!-- 购物车列表结束 -->
+
+        <!-- 价格详情开始 -->
+        <view class="price-detail block">
+            <view class="detail-row subtotal">
+                <text class="detail-name">小计</text>
+                <view class="detail-value">
+                    <text class="currency">{{currency}}</text>
+                    <text>{{order.subtotal}}</text>
+                </view>
+            </view>
+            <!-- W2W Extension, Name: w2w-points-and-rewards, Code: orderPointsInfo -->
+
+<!-- W2W Extension, Name: w2w-points-and-rewards, Code: orderPointsInfo -->
+            <block wx:for="{{order.coupon_lines}}" wx:key="key">
+                <view class="detail-row discount">
+                    <text class="detail-name">优惠券</text>
+                    <view class="detail-value">-
+                        <text class="currency">{{currency}}</text>
+                        <text>{{item.discount}}</text>
+                    </view>
+                </view>
+            </block>
+            <block wx:for="{{order.fee_lines}}" wx:key="key">
+                <view class="detail-row fee">
+                    <text class="detail-name">{{item.name}}</text>
+                    <view class="detail-value">
+                        <text wx:if="{{item.total < 0}}" style="margin-left:0">-</text>
+                        <text class="currency">{{currency}}</text>
+                        <text>{{item.total_abs}}</text>
+                    </view>
+                </view>
+            </block>
+            <block wx:for="{{order.shipping_lines}}" wx:key="key">
+                <view class="detail-row shipping">
+                    <text class="detail-name">运费</text>
+                    <view class="detail-value">
+                        <text class="currency">{{currency}}</text>
+                        <text>{{item.total}}</text>
+                    </view>
+                </view>
+            </block>
+            <view wx:if="{{order.total_tax > 0}}" class="detail-row tax">
+                <text class="detail-name">税</text>
+                <view class="detail-value">
+                    <text class="currency">{{currency}}</text>
+                    <text>{{order.total_tax}}</text>
+                </view>
+            </view>
+        </view>
+        <!-- 价格详情结束 -->
+
+        <!-- 实付金额开始 -->
+        <view class="order-total product-price">
+            <text class="order-total-text">合计</text>
+            <view class="price">
+                <text class="currency">{{currency}}</text>
+                <text>{{order.total}}</text>
+            </view>
+        </view>
+        <!-- 实付金额结束 -->
+
+        <!-- 退款开始 -->
+        <view wx:if="{{order.refunds.length > 0}}" class="order-refunds block">
+            <view class="refund-label">退款</view>
+            <block wx:for="{{order.refunds}}" wx:key="key">
+                <view class="detail-row refund">
+                    <view class="detail-name">
+                        <text>{{item.refund}}</text>
+                        <text class="date">{{item.date}}</text>
+                    </view>
+                    <view class="detail-value">
+                        <text class="currency">-{{currency}}</text>
+                        <text>{{item.total}}</text>
+                    </view>
+                </view>
+            </block>
+        </view>
+        <!-- 退款结束 -->
+
+        <!-- 订单时间 订单号开始 -->
+        <view class="date-detail block">
+            <view wx:if="{{order.transaction_id != ''}}" class="detail-row" data-copy="{{order.transaction_id}}" bindtap="copyText">
+                <text class="detail-name">交易号</text>
+                <text class="detail-value">{{order.transaction_id}}</text>
+                <image class="copy" src="/images/copy_light.svg"></image>
+            </view>
+            <view class="detail-row" data-copy="{{order.order_number}}" bindtap="copyText">
+                <text class="detail-name">订单号</text>
+                <text class="detail-value">{{order.order_number}}</text>
+                <image class="copy" src="/images/copy_light.svg"></image>
+            </view>
+            <view class="detail-row">
+                <text class="detail-name">创建时间</text>
+                <text class="detail-value">{{order.date_created}}</text>
+            </view>
+            <view wx:if="{{order.date_paid != ''}}" class="detail-row">
+                <text class="detail-name">付款时间</text>
+                <text class="detail-value">{{order.date_paid}}</text>
+            </view>
+            <view class="detail-row">
+                <text class="detail-name">支付方式</text>
+                <text class="detail-value">{{order.payment_method_title}}</text>
+            </view>
+        </view>
+        <!-- 订单时间 订单号结束 -->
+
+        <!-- 底栏开始 -->
+        <view class="actions-button">
+            <view class="actions-button-left">
+                <button class="btn" bindtap="goIndex">
+                    <image src="/images/home_light.svg"></image>
+                </button>
+            </view>
+            <view class="actions-button-right">
+                <block wx:if="{{order.status == 'pending' || order.status == 'on-hold'}}">
+                    <button class="btn" bindtap="cancelOrder">取消订单</button>
+                </block>
+                <block wx:if="{{order.status == 'pending'}}">
+                    <button class="btn" open-type="share" data-type="paybyfriend">好友代付</button>
+                    <button class="btn btn-primary" bindtap="payBtnClick">付款</button>
+                </block>
+                <block wx:if="{{order.status != 'pending'}}">
+                    <button class="btn" open-type="contact" show-message-card="true" session-from="shop-order-detail" send-message-title="商城订单 - {{order.id}}">联系客服</button>
+                </block>
+                <block wx:if="{{order.status == 'processing' || order.status == 'shipped'}}">
+                    <button class="btn btn-primary" data-id="{{order.id}}" bindtap="confirmOrderReceived">确认收货</button>
+                </block>
+                <block wx:if="{{order.status == 'completed' && order.reviewed == false}}">
+                    <button class="btn btn-main" data-id="{{order.id}}" bindtap="goOrderReviewList">评价晒单</button>
+                </block>
+                <!-- W2W Extension, Name: w2w-products-groupon, Code: groupOrderShareBtn -->
+                <block wx:if="{{!order.groupon.is_dismiss && !order.groupon.is_success && order.groupon.is_grouped_on && !order.groupon.is_expired}}">
+                    <button class="btn btn-primary" open-type="share" data-type="groupon">邀请好友</button>
+                </block>
+                <!-- W2W Extension, Name: w2w-products-groupon, Code: groupOrderShareBtn -->
+            </view>
+        </view>
+        <!-- 底栏结束 -->
+
+        <template is="payment-choose-popup" data="{{show: isPaymentChoosePopup, popupOrder}}"></template>
+
+        <!-- 好友代付弹窗开始 -->
+        <view class="zan-popup zan-popup--center paybyfriend-popup {{isPayByFriendPopup ? 'zan-popup--show' : ''}}">
+            <view class="zan-popup__mask" bindtap="closePayByFriendPopup" catchtouchmove="preventTouchMove"></view>
+            <view class="zan-popup__container">
+                <view class="popup-wrapper">
+                    <view class="popup-title">已成功下单，快邀请好友为你付款吧</view>
+                    <button class="btn btn-primary" open-type="share" data-type="paybyfriend" bindtap="closePayByFriendPopup">邀请好友付款</button>
+                </view>
+            </view>
+        </view>
+        <!-- 好友代付弹窗开始 -->
+    </block>
+    <!-- 正常查看订单结束 -->
+
+</view>
+
+<template is="login-popup" data="{{show: isLoginPopup, userInfo}}"></template>

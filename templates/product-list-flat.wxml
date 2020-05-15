@@ -1,0 +1,18 @@
+<!--templates/product-list-flat.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="product-grid.wxml" />
+
+<template name="product-list-flat">
+    <view class="product-list product-list-flat">
+        <block wx:for="{{products}}" wx:key="product">
+            <template is="product-grid" data="{{index, item, inEdit, selectedProducts, currency, layout: '2019', br, shadow}}"></template>
+        </block>
+    </view>
+</template>

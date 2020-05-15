@@ -1,0 +1,119 @@
+<!--pages/groupon-product-list/groupon-product-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<!-- W2W Extension, Name: w2w-products-groupon, Code: grouponProductListContent -->
+
+<import src="/templates/groupon-rule-popup.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar class="{{showNaviBar ? 'show' : ''}}" custom-style="{{ {backgroundColor: (showNaviBar ? '#fff' : 'transparent')} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <view class="nav-bar-wrapper">
+            <view class="nav-bar-item back" bindtap="backBtnTap">
+                <image src="{{showNaviBar ? '/images/back_light.svg' : '/images/back_white_light.svg'}}"></image>
+            </view>
+            <view class="nav-bar-item title">
+                <text>{{pageTitle}}</text>
+            </view>
+            <view class="nav-bar-item btns-placeholder"></view>
+        </view>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view wx:if="{{products}}" class="container groupon-product-list">
+    <view class="groupon-banner">
+        <image class="banner-image" src="{{banner}}" mode="widthFix" />
+        <view class="rule-btn" bindtap="openGrouponRulePopup">
+            <image class="rule-icon" src="/images/help.svg"></image>
+            <text>规则</text>
+        </view>
+    </view>
+    <view wx:if="{{featured_amount == 0 && normal_amount == 0}}" class="no-groupon-product">
+        <text>暂无拼团活动，敬请期待</text>
+    </view>
+    <view wx:if="{{featured_amount > 0}}" class="products-container">
+        <view class="groupon-product-header">
+            <image class="groupon-title groupon-title-featured" src="/images/groupon-title-featured.svg" mode="widthFix"></image>
+            <text class="groupon-desc">好货一起拼，拼着买更便宜</text>
+        </view>
+        <view class="products featured">
+            <block wx:for="{{products}}" wx:key="key">
+                <view wx:if="{{item.groupon.product_banner}}" class="product" data-id="{{item.groupon.product_id}}" bindtap="goProductDetail">
+                    <view class="product-image-wrapper">
+                        <lazy-image class="product-image" src="{{item.groupon.product_banner}}" mode="aspectFill" />
+                        <view class="member-amount">{{item.groupon.product_member_amount}}人团</view>
+                        <view class="go-groupon">开团</view>
+                    </view>
+                    <view class="product-detail">
+                        <view class="product-title">{{item.groupon.product_name}}</view>
+                        <view class="product-price-wrapper">
+                            <view class="product-price">
+                                <text class="currency">{{currency}}</text>
+                                <text>{{item.groupon.product_groupon_price}}</text>
+                            </view>
+                            <view class="product-price-regular">
+                                <text>单买价 </text>
+                                <text class="currency">{{currency}}</text>
+                                <text>{{item.groupon.product_price}}</text>
+                            </view>
+                        </view>
+                        <view class="product-meta thin-border thin-border-top">
+                            <image class="product-meta-icon" src="/images/groupon_light.svg"></image>
+                            <text>{{item.groupon.product_groupon_total_amount}}人参团</text>
+                        </view>
+                    </view>
+                </view>
+            </block>
+        </view>
+    </view>
+    <view wx:if="{{normal_amount > 0}}" class="products-container">
+        <view class="groupon-product-header">
+            <image class="groupon-title groupon-title-normal" src="/images/groupon-title-normal.svg" mode="widthFix"></image>
+        </view>
+        <view class="products normal">
+            <block wx:for="{{products}}" wx:key="key">
+                <view wx:if="{{!item.groupon.product_banner}}" class="product" data-id="{{item.groupon.product_id}}" bindtap="goProductDetail">
+                    <view class="product-image-wrapper">
+                        <lazy-image class="product-image" src="{{item.groupon.product_image}}" mode="aspectFill" />
+                        <view class="member-amount">{{item.groupon.product_member_amount}}人团</view>
+                    </view>
+                    <view class="product-detail">
+                        <view class="product-title ellipsis">{{item.groupon.product_name}}</view>
+                        <view class="price-row">
+                            <view class="product-price-wrapper">
+                                <view class="product-price">
+                                    <text class="currency">{{currency}}</text>
+                                    <text>{{item.groupon.product_groupon_price}}</text>
+                                </view>
+                                <view class="product-price-regular">
+                                    <text>单买价 </text>
+                                    <text class="currency">{{currency}}</text>
+                                    <text>{{item.groupon.product_price}}</text>
+                                </view>
+                            </view>
+                            <view class="go-groupon">去拼团</view>
+                        </view>
+                    </view>
+                </view>
+            </block>
+        </view>
+    </view>
+
+    <button class="navi-button thin-border thin-border-top" data-url="/pages/groupon-order-list/groupon-order-list" bindtap="linkTap">
+        <text>查看拼团订单</text>
+        <image src="/images/go_light.svg"></image>
+    </button>
+
+    <!-- 拼团规则弹窗开始 -->
+    <template is="groupon-rule-popup" data="{{isGrouponRulePopup}}"></template>
+    <!-- 拼团规则弹窗结束 -->
+</view>
+
+<!-- W2W Extension, Name: w2w-products-groupon, Code: grouponProductListContent -->

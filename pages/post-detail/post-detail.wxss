@@ -1,0 +1,180 @@
+/* pages/post-detail/post-detail.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+.container {
+    background-color: #efefef;
+    overflow: hidden;
+}
+
+.block {
+    margin: 12px 0;
+    padding: 10px 15px;
+    background-color: #fff;
+}
+
+.block.first {
+    margin-top: 0;
+}
+
+.block.last {
+    margin-bottom: 0;
+}
+
+.post-title {
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: normal;
+    outline: none;
+    margin-bottom: 25rpx;
+    overflow: hidden;
+}
+
+.post-meta.header {
+    display: flex;
+    padding-bottom: 25rpx;
+    margin-bottom: 25rpx;
+}
+
+.post-meta.footer {
+    margin-top: 10px;
+}
+
+.post-meta .meta, .post-meta .meta {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+}
+
+.post-meta .meta text {
+    font-size: 12px;
+    color: #707070;
+}
+
+/* 文章评论 */
+
+.post-comment {
+    padding: 0;
+}
+
+.post-comment-header {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.post-comment-header::before {
+    content: "";
+    position: absolute;
+    top: -0.5px;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    border-bottom: 1px solid #ddd;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.comment-label {
+    font-size: 14px;
+}
+
+.write-comment {
+    font-size: 13px;
+    color: #767676;
+    position: relative;
+    z-index: 2;
+}
+
+.empty-comment {
+    color: #c0c0c0;
+    padding: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.comment-popup .zan-popup__container {
+    width: 100%;
+    padding: 13px 8px;
+}
+
+.comment-list {
+    background-color: #fff;
+    padding: 5px 15px;
+}
+
+.comment-list .comment {
+    overflow: hidden;
+    margin: 18px 0;
+    display: flex;
+}
+
+.comment-content, .comment-footer {
+    margin: 8px 0;
+}
+
+.comment-avatar {
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+}
+
+.comment-avatar image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.comment-right {
+    flex-grow: 1;
+}
+
+.comment-name {
+    font-size: 14px;
+}
+
+.comment-content {
+    color: #666;
+    font-size: 14px;
+    margin: 6px 0;
+}
+
+.comment-footer {
+    margin-top: 0;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #999;
+}
+
+.load-more {
+    margin-top: 5px;
+    padding: 8px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #eaeaea;
+}
+
+/* 分享 */
+
+.share-popup {
+    display: flex;
+    margin-top: -12px;
+}

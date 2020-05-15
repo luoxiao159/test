@@ -1,0 +1,23 @@
+<!--**
+ * Project: loading
+ * Description: 加载动画
+ * Author: 
+ * Organization: 
+ */-->
+
+<view class="loading">
+    <view class="circle-line">
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+        <text></text>
+    </view>
+</view>

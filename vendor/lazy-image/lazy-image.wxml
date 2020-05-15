@@ -1,0 +1,12 @@
+<!--**
+ * Project: lazy-image
+ * Description: 小程序图片懒加载组件
+ * Author: 
+ * Organization: 
+ * Version: 20200212
+ */-->
+
+<view class="lazy-image-wrapper {{show ? 'show' : ''}}" style="{{styles}}">
+    <image src="{{load ? src : ''}}" class="lazy-image" mode="{{mode}}" webp="{{true}}" bindload="imageLoad"></image>
+    <image wx:if="{{!show && loadingImage}}" class="lazy-image-loading" src="{{loadingImage}}"></image>
+</view>

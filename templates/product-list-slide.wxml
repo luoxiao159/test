@@ -1,0 +1,22 @@
+<!--templates/product-list-slide.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="product-grid.wxml" />
+
+<template name="product-list-slide">
+    <view class="product-list product-list-slide" style="padding-bottom:{{height}}%">
+        <swiper previous-margin="0rpx" next-margin="{{marginRight}}rpx" circular="{{true}}">
+            <block wx:for="{{products}}" wx:key="product">
+                <swiper-item>
+                    <template is="product-grid" data="{{index, item, currency, layout: '2019', br, shadow}}"></template>
+                </swiper-item>
+            </block>
+        </swiper>
+    </view>
+</template>

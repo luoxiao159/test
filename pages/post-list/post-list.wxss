@@ -1,0 +1,104 @@
+/* pages/post-list/post-list.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+.top-bar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    background-color: #fff;
+}
+
+.search {
+    position: relative;
+    padding: 0 8px;
+}
+
+.search-icon {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+}
+
+.search-input {
+    display: block;
+    color: #555;
+    font-size: 12px;
+    margin-top: 10px;
+    padding: 2px 30px;
+    height: 32px;
+    border-radius: 32px;
+    background-color: rgba(0, 0, 0, 0.07);
+    box-sizing: border-box;
+}
+
+.search-close {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+}
+
+.post-category-bar {
+    width: 100%;
+}
+
+.zan-tab__bd--scroll {
+    height: 35px !important;
+}
+
+.zan-tab__bd--scroll .zan-tab__item {
+    min-width: auto;
+    width: auto;
+    position: relative;
+}
+
+.zan-tab .zan-tab__title, .zan-tab .zan-tab__item--selected .zan-tab__title {
+    color: #555;
+    border-bottom: 0;
+    height: 35px;
+    line-height: 35px;
+    font-size: 14px;
+}
+
+.zan-tab .zan-tab__item--selected .zan-tab__title::before {
+    content: "";
+    display: block;
+    background-color: #555;
+    width: 25px;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.zan-tab__bd {
+    border-bottom: 0;
+    width: 100%;
+}
+
+.tab-content-wrapper {
+    background-color: var(--mainColor);
+    padding: 0;
+    margin-top: 77px;
+}
+
+.no-more {
+    color: #707070;
+    text-align: center;
+    font-size: 12px;
+    margin: 0.8rem 0;
+}

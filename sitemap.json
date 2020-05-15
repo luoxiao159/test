@@ -1,0 +1,57 @@
+{
+    "desc": "关于本文件的更多信息，请参考文档 https://developers.weixin.qq.com/miniprogram/dev/framework/sitemap.html",
+    "rules": [
+        {
+            "action": "allow",
+            "page": "/pages/index/index"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/about/about"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/category/category"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/coupon-center/coupon-center"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/groupon-product-list/groupon-product-list"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/page-detail/page-detail"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/post-detail/post-detail"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/post-list/post-list"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/product-detail/product-detail"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/product-list/product-list"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/product-review-list/product-review-list"
+        },
+        {
+            "action": "allow",
+            "page": "/pages/web-view/web-view"
+        },
+        {
+            "action": "disallow",
+            "page": "*"
+        }
+    ]
+}

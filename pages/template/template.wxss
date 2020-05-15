@@ -1,0 +1,17 @@
+/* pages/template/template.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+@import "/vendor/modules/modules.wxss";
+
+page {
+    background-color: #f5f5f5;
+}
+
+.go-top-btn {
+    bottom: 20px;
+}

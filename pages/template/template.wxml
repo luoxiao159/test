@@ -1,0 +1,24 @@
+<!--pages/template/template.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/vendor/modules/modules.wxml" />
+
+<view class="container home">
+    <block wx:if="{{modules}}">
+        <template is="modules" data="{{modules, currency, pageTitle, navBarTheme, noticebar, menuListShow, currentPost, mapMarkerStyle, isModulePopup, bannerSettings, NAV_HEIGHT, NAV_BAR_HEIGHT, STATUS_BAR_HEIGHT, PIXEL_RATIO}}" />
+    </block>
+    <view wx:elif="{{rending}}" class="center loading">
+        <loading />
+        <text>请稍候</text>
+    </view>
+
+    <button wx:if="{{goTopShow}}" class="btn side-btn side-btn-card go-top-btn" bindtap="goTop">
+        <image src="/images/top_light.svg"></image>
+    </button>
+</view>

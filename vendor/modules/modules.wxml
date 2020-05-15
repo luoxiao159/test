@@ -1,0 +1,377 @@
+<!--**
+ * Project: template
+ * Description: 小程序模块化装修
+ * Author: 
+ * Organization: 
+ * Version: 20200212
+ */-->
+
+<import src="/vendor/ZanUI/noticebar/index.wxml" />
+<import src="/templates/product-list-flat.wxml" />
+<import src="/templates/product-list-card.wxml" />
+<import src="/templates/product-list-slide.wxml" />
+<import src="/templates/post-list.wxml" />
+<import src="/templates/nav-bar.wxml" />
+<import src="/templates/coupon.wxml" />
+<import src="/templates/video-cover.wxml" />
+<import src="/templates/index.wxml" />
+<wxs src="../../utils/util.wxs" module="Util" />
+
+<template name="modules">
+    <view wx:if="{{modules}}" class="modules">
+        <block wx:for="{{modules}}" wx:for-index="mIndex" wx:for-item="m" wx:key="key">
+            <view class="module module-{{m.name}}" style="background-color:{{m.bg}};margin:{{m.m.t.v + m.m.t.u}} {{m.m.r.v + m.m.r.u}} {{m.m.b.v + m.m.b.u}} {{m.m.l.v + m.m.l.u}};padding:{{m.p.t.v + m.p.t.u}} {{m.p.r.v + m.p.r.u}} {{m.p.b.v + m.p.b.u}} {{m.p.l.v + m.p.l.u}}">
+                <view class="module-inner" style="border-width:{{m.b.t.v + m.b.t.u}} {{m.b.r.v + m.b.r.u}} {{m.b.b.v + m.b.b.u}} {{m.b.l.v + m.b.l.u}};border-color:{{m.b.c}};border-style:{{m.b.s}};border-radius:{{m.b.rd}}px;box-shadow:{{m.s.x.v + m.s.x.u}} {{m.s.y.v + m.s.y.u}} {{m.s.b.v + m.s.b.u}} {{m.s.s.v + m.s.s.u}} {{m.s.c}};">
+                    <block wx:if="{{m.name == '00'}}"></block>
+                    <!-- W2W Extension, Name: w2w-home-page-modules, Code: indexModules -->
+                    <block wx:elif="{{m.name == 'notice'}}">
+                        <template is="zan-noticebar" data="{{text: m.fields.content, componentId: 'noticebar', animationData:noticebar.animationData, color:m.fields.color, bgColor:m.bg, url:m.fields.url}}"></template>
+                    </block>
+                    <block wx:elif="{{m.name == 'official-account'}}">
+                        <official-account></official-account>
+                    </block>
+                    <block wx:elif="{{m.name == 'search'}}">
+                        <block wx:if="{{m.fields.layout == 'navbar'}}">
+                            <view class="navbar-search-wrap" style="background-color:{{m.bg}};">
+                                <view class="statusbar-placeholder" style="height:{{STATUS_BAR_HEIGHT}};"></view>
+                                <template is="search" data="{{title: m.fields.title, layout: m.fields.layout, logo: m.fields.logo, transparent:m.fields.transparent, NAV_BAR_HEIGHT}}"></template>
+                            </view>
+                            <view class="navbar-search-placeholder" style="height:{{!m.fields.transparent ? NAV_HEIGHT : 0}};"></view>
+                        </block>
+                        <block wx:elif="{{m.fields.layout == 'normal'}}">
+                            <template is="search" data="{{title: m.fields.title, layout: m.fields.layout}}"></template>
+                        </block>
+                    </block>
+                    <block wx:elif="{{m.name == 'navbar'}}">
+                        <nav-bar custom-style="{{ {backgroundColor: (m.bg || '#fff')} }}">
+                            <view slot="content" class="nav-bar-wrapper-wrap">
+                                <template is="nav-bar" data="{{pageTitle:m.fields.title || pageTitle, backBtn:m.fields.title || false, theme:navBarTheme}}"></template>
+                            </view>
+                            <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+                        </nav-bar>
+                    </block>
+                    <block wx:elif="{{m.name == 'title'}}">
+                        <template wx:if="{{m.fields.title != ''}}" is="title" data="{{title: m.fields.title, layout: m.fields.layout, link: m.fields.link}}"></template>
+                    </block>
+                    <block wx:elif="{{m.name == 'menu'}}">
+                        <view class="menu-list-mask {{menuListShow ? 'show' : ''}}" bindtap="closeMenuList" catchtouchmove="preventTouchMove"></view>
+                        <view class="menu-list style-{{m.fields.style}} {{menuListShow ? 'show' : ''}}">
+                            <button class="menu-btn main-btn side-btn-card" bindtap="menuListSwitch">
+                                <image src="{{menuListShow ? '/images/close.svg' : '/images/menu-icon.svg'}}"></image>
+                            </button>
+                            <block wx:for="{{m.fields.menu}}" wx:key="key">
+                                <button wx:if="{{m.fields.style == 'upward'}}" class="menu-btn side-btn-card" style="transition-delay:{{ (m.fields.menu.length - index - 1) * 0.04 }}s; transform:translateY({{ menuListShow ? ( (m.fields.menu.length - index) * -45 ) : 0 }}px);" data-url="{{item.url}}"
+                                    bindtap="menuItemTap">
+                                    <image src="{{item.image}}"></image>
+                                </button>
+                                <button wx:elif="{{m.fields.style == '45deg' || m.fields.style == '30deg'}}" class="menu-btn side-btn-card" style="transition-delay:{{ index * 0.04 }}s; transform:rotate({{ menuListShow ?  ( index * ( m.fields.style == '45deg' ? -45 : -30 ) ) : 0 }}deg) translateY({{ menuListShow ? ( m.fields.style == '45deg' ? -65 : -97.5 ) : 0 }}px);"
+                                    data-url="{{item.url}}" bindtap="menuItemTap">
+                                    <image src="{{item.image}}" style="transform:rotate({{index * ( m.fields.style == '45deg' ? 45 : 30 )}}deg)"></image>
+                                </button>
+                                <button wx:else="{{m.fields.style == 'fixed'}}" class="menu-btn side-btn-card" data-url="{{item.url}}" bindtap="menuItemTap">
+                                    <image src="{{item.image}}"></image>
+                                </button>
+                            </block>
+                        </view>
+                    </block>
+                    <block wx:elif="{{m.name == 'banner'}}">
+                        <template is="banner" data="{{mIndex, banner:m.fields.banner, imgWidth, bannerSettings, autoplay:m.fields.autoplay, dots:m.fields.dots, multiple:m.fields.multiple, marginLeft:m.fields.ml, marginRight:m.fields.mr, paddingTB:m.fields.ptb, paddingLR:m.fields.plr, br:m.fields.br, shadow:m.fields.shadow, mPaddingL:m.p.l.u == 'px' ? m.p.l.v * PIXEL_RATIO : m.p.l.v, mPaddingR:m.p.r.u == 'px' ? m.p.r.v * PIXEL_RATIO : m.p.r.v}}"></template>
+                    </block>
+                    <block wx:elif="{{m.name == 'nav'}}">
+                        <view class="nav-list {{m.fields.column == 'column-5' ? 'column-5' : ''}} {{!m.bg ? 'default' : Util.lightOrDark(m.bg)}}">
+                            <block wx:for="{{m.fields.nav}}" wx:key="key">
+                                <view class="nav" data-url="{{item.url}}" bindtap="linkTap">
+                                    <view class="image">
+                                        <view class="image-inner">
+                                            <lazy-image src="{{item.image}}" dynamic-width="{{true}}" full-width="{{true}}" />
+                                        </view>
+                                    </view>
+                                    <view wx:if="{{item.title != ''}}" class="title">{{item.title}}</view>
+                                </view>
+                            </block>
+                        </view>
+                    </block>
+                    <block wx:elif="{{m.name == 'posts'}}">
+                        <block wx:if="{{m.fields.layout == 'title'}}">
+                            <template is="posts" data="{{posts: m.data, currentPost}}"></template>
+                        </block>
+                        <block wx:elif="{{m.fields.layout == 'title-image'}}">
+                            <template wx:if="{{m.fields.title != ''}}" is="title" data="{{title: m.fields.title, border: true}}"></template>
+                            <template is="post-list" data="{{posts: m.data, showMeta: false}}"></template>
+                        </block>
+                    </block>
+                    <block wx:elif="{{m.name == 'products'}}">
+                        <template wx:if="{{m.fields.title != ''}}" is="title" data="{{title: m.fields.title}}"></template>
+                        <scroll-view wx:if="{{m.categories}}" scroll-x="{{true}}" class="category-filter">
+                            <block wx:for="{{m.categories}}" wx:key="key">
+                                <view class="cat-item {{item.id == m.selected_category ? 'selected' : ''}}" data-id="{{item.id}}" data-module-index="{{mIndex}}" bindtap="productListSwitchCategory">{{item.name}}</view>
+                            </block>
+                        </scroll-view>
+                        <template is="{{m.fields.layout || 'product-list-flat'}}" data="{{products:m.data, currency, br:m.fields.br, shadow:m.fields.shadow.x.v + m.fields.shadow.x.u + ' ' + m.fields.shadow.y.v + m.fields.shadow.y.u + ' ' + m.fields.shadow.b.v + m.fields.shadow.b.u + ' ' + m.fields.shadow.s.v + m.fields.shadow.s.u + ' ' + m.fields.shadow_color, marginRight:m.fields.margin_right, height:m.fields.height}}"></template>
+                    </block>
+                    <block wx:elif="{{m.name == 'video'}}">
+                        <view class="media-wrapper {{bannerSettings[mIndex].playing == true ? 'playing' : ''}}">
+                            <block wx:if="{{m.fields.video.type == 'video'}}">
+                                <video id="{{m.fields.video.type + '_' + mIndex + '_' + 0}}" src="{{m.fields.video.src}}" poster="{{m.fields.video.url}}" style="height:{{( 750 - ( ( m.p.l.u == 'px' ? m.p.l.v * PIXEL_RATIO : m.p.l.v ) || 0 ) - ( ( m.p.r.u == 'px' ? m.p.r.v * PIXEL_RATIO : m.p.r.v ) || 0 ) ) / JSON.parse(m.fields.video.meta).width * JSON.parse(m.fields.video.meta).height}}rpx"
+                                    data-module-index="{{mIndex}}" data-id="{{m.fields.video.type + '_' + mIndex + '_' + 0}}" data-type="{{m.fields.video.type}}" bindplay="videoPlay" bindpause="videoPause" bindended="videoPause"></video>
+                                <template is="video-cover" data="{{type: m.fields.video.type, poster: m.fields.video.url, duration: JSON.parse(m.fields.video.meta).duration, mIndex, index:0}}"></template>
+                            </block>
+                            <block wx:elif="{{m.fields.video.type == 'txvideo'}}">
+                                <txvideo vid="{{m.fields.video.src}}" playerid="{{m.fields.video.src}}" width="100%" height="{{( 750 - ( ( m.p.l.u == 'px' ? m.p.l.v * PIXEL_RATIO : m.p.l.v ) || 0 ) - ( ( m.p.r.u == 'px' ? m.p.r.v * PIXEL_RATIO : m.p.r.v ) || 0 ) ) / JSON.parse(m.fields.video.meta).width * JSON.parse(m.fields.video.meta).height}}rpx"
+                                    isHiddenStop="{{true}}" isNeedMutex="{{false}}" usePoster="{{true}}" autoplay="{{false}}" data-module-index="{{mIndex}}" data-id="{{m.fields.video.src}}" data-type="{{m.fields.video.type}}" bindplay="videoPlay" bindpause="videoPause"
+                                    bindended="videoPause"></txvideo>
+                                <template is="video-cover" data="{{src: m.fields.video.src, type: m.fields.video.type, poster: m.fields.video.url || JSON.parse(m.fields.video.meta).poster, duration: JSON.parse(m.fields.video.meta).duration, mIndex, index:0}}"></template>
+                            </block>
+                        </view>
+                    </block>
+                    <block wx:elif="{{m.name == 'map'}}">
+                        <view class="map-wrap">
+                            <map id="map{{mIndex}}" style="width:100%;height:300px;" longitude="{{m.fields.lng}}" latitude="{{m.fields.lat}}" markers="{{ [{ longitude:m.fields.lng, latitude:m.fields.lat, callout:{content:m.fields.label, ...mapMarkerStyle} }] }}" show-location="{{true}}"></map>
+                            <view class="map-actions">
+                                <view class="map-action map-center" data-id="map{{mIndex}}" data-lng="{{m.fields.lng}}" data-lat="{{m.fields.lat}}" bindtap="mapToCenter">
+                                    <image src="/images/map-center.svg"></image>
+                                </view>
+                                <view class="map-action map-go" data-label="{{m.fields.label}}" data-lng="{{m.fields.lng}}" data-lat="{{m.fields.lat}}" bindtap="mapNav">
+                                    <image src="/images/map-go.svg"></image>
+                                </view>
+                            </view>
+                        </view>
+                    </block>
+                    <block wx:elif="{{m.name == 'imagemap'}}">
+                        <view class="imagemap-inner">
+                            <lazy-image src="{{m.fields.image}}" dynamic-width="{{true}}" rect-meta="{{m.fields.meta}}" />
+                            <block wx:for="{{m.data}}" wx:for-item="area" wx:key="key">
+                                <view class="imagemap-area" style="width:{{area.w}}%;height:{{area.h}}%;top:{{area.y}}%;left:{{area.x}}%" data-url="{{area.url}}" bindtap="linkTap"></view>
+                            </block>
+                        </view>
+                    </block>
+                    <block wx:elif="{{m.name == 'richtext'}}">
+                        <html2wxml json="{{m.data}}" showLoading="{{false}}" data-type="detail" bindWxmlTagATap="tagATap" bindWxmlVideoPlay="videoPlay" bindWxmlVideoPause="videoPause" bindWxmlPlayVideo="playDetailVideo" bindWxmlReceiveCoupon="receiveCoupon"></html2wxml>
+                    </block>
+                    <block wx:elif="{{m.name == 'popup'}}">
+                        <view class="zan-popup zan-popup--center module-popup {{isModulePopup ? 'zan-popup--show' : ''}}" bindtap="closeModulePopup">
+                            <view class="zan-popup__mask" data-id="{{m.fields.id}}" data-reshow="{{m.fields.reshow}}" catchtouchmove="preventTouchMove"></view>
+                            <view class="zan-popup__container">
+                                <image class="module-popup-background-image" src="{{m.fields.content}}" mode="widthFix" style="width:{{m.fields.width ? m.fields.width : 250}}px" data-id="{{m.fields.id}}" data-reshow="{{m.fields.reshow}}" bindload="openModulePopup" data-url="{{m.fields.url}}"
+                                    bindtap="linkTap"></image>
+                                <image wx:if="{{m.fields.close}}" class="popup-close" src="/images/close_white.svg" bindtap="closeModulePopup"></image>
+                            </view>
+                        </view>
+                    </block>
+                    <block wx:elif="{{m.name == 'button'}}">
+                        <template is="button" data="{{url: m.fields.url, text: m.fields.title}}"></template>
+                    </block>
+                    <block wx:elif="{{m.name == 'images'}}">
+                        <template wx:if="{{m.fields.title != ''}}" is="title" data="{{title: m.fields.title}}"></template>
+                        <view class="layout-wrapper" style="height:{{m.fields.height}}rpx">
+                            <view class="images-layout images-layout-{{m.fields.layout}} {{m.fields.spacing ? 'spacing' : ''}}">
+                                <template is="images-layout-{{m.fields.layout}}" data="{{images:m.fields.images, br:m.fields.br}}"></template>
+                            </view>
+                        </view>
+                    </block>
+                    <!-- W2W Extension, Name: w2w-home-page-modules, Code: indexModules -->
+                    <!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponsModule -->
+                    <block wx:elif="{{m.name == 'coupons'}}">
+                        <template is="coupons" data="{{coupons: m.data, currency}}"></template>
+                    </block>
+                    <!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponsModule -->
+                    
+                </view>
+            </view>
+        </block>
+    </view>
+</template>
+
+<!-- W2W Extension, Name: w2w-home-page-modules, Code: indexModuleTemplates -->
+<template name="images-layout-one-1">
+    <view class="item" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-two-1">
+    <view class="item" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="item" data-url="{{images[1].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[1].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-two-2">
+    <view class="item" style="width:200%" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="item" style="width:100%" data-url="{{images[1].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[1].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-two-3">
+    <view class="item" style="width:100%" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="item" style="width:200%" data-url="{{images[1].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[1].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-three-1">
+    <view class="item" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="item" data-url="{{images[1].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[1].image}}" />
+        </view>
+    </view>
+    <view class="item" data-url="{{images[2].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[2].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-three-2">
+    <view class="item" style="width:50%" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="wrapper column" style="width:50%">
+        <view class="item" style="height:50%" data-url="{{images[1].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[1].image}}" />
+            </view>
+        </view>
+        <view class="item" style="height:50%" data-url="{{images[2].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[2].image}}" />
+            </view>
+        </view>
+    </view>
+</template>
+<template name="images-layout-three-3">
+    <view class="wrapper column" style="width:50%">
+        <view class="item" style="height:50%" data-url="{{images[0].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[0].image}}" />
+            </view>
+        </view>
+        <view class="item" style="height:50%" data-url="{{images[1].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[1].image}}" />
+            </view>
+        </view>
+    </view>
+    <view class="item" style="width:50%" data-url="{{images[2].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[2].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-three-4">
+    <view class="item" style="height:50%" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="wrapper row" style="height:50%">
+        <view class="item" style="width:50%" data-url="{{images[1].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[1].image}}" />
+            </view>
+        </view>
+        <view class="item" style="width:50%" data-url="{{images[2].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[2].image}}" />
+            </view>
+        </view>
+    </view>
+</template>
+<template name="images-layout-three-5">
+    <view class="wrapper row" style="width:100%; height:50%">
+        <view class="item" style="width:50%" data-url="{{images[0].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[0].image}}" />
+            </view>
+        </view>
+        <view class="item" style="width:50%" data-url="{{images[1].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[1].image}}" />
+            </view>
+        </view>
+    </view>
+    <view class="item" style="height:50%" data-url="{{images[2].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[2].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-four-1">
+    <view class="item" data-url="{{images[0].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[0].image}}" />
+        </view>
+    </view>
+    <view class="item" data-url="{{images[1].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[1].image}}" />
+        </view>
+    </view>
+    <view class="item" data-url="{{images[2].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[2].image}}" />
+        </view>
+    </view>
+    <view class="item" data-url="{{images[3].url}}" bindtap="linkTap">
+        <view class="item-inner" style="border-radius:{{br}}px">
+            <lazy-image src="{{images[3].image}}" />
+        </view>
+    </view>
+</template>
+<template name="images-layout-four-2">
+    <view class="wrapper column" style="width:50%">
+        <view class="item" style="height:50%" data-url="{{images[0].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[0].image}}" />
+            </view>
+        </view>
+        <view class="item" style="height:50%" data-url="{{images[1].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[1].image}}" />
+            </view>
+        </view>
+    </view>
+    <view class="wrapper column" style="width:50%">
+        <view class="item" style="height:50%" data-url="{{images[2].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[2].image}}" />
+            </view>
+        </view>
+        <view class="item" style="height:50%" data-url="{{images[3].url}}" bindtap="linkTap">
+            <view class="item-inner" style="border-radius:{{br}}px">
+                <lazy-image src="{{images[3].image}}" />
+            </view>
+        </view>
+    </view>
+</template>
+
+<wxs module="JSON">
+    var parse = function(str) {
+        return JSON.parse(str);
+    }
+    module.exports.parse = parse;
+</wxs>
+<!-- W2W Extension, Name: w2w-home-page-modules, Code: indexModuleTemplates -->

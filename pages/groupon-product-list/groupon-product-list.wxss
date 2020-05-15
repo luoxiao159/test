@@ -1,0 +1,249 @@
+/* pages/groupon-product-list/groupon-product-list.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+/* W2W Extension, Name: w2w-products-groupon, Code: grouponProductListStyles */
+
+nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.ui-nav-bar {
+    transition: background-color 0.2s ease-in-out;
+}
+
+nav-bar:not(.show) .ui-nav-bar {
+    box-shadow: none;
+}
+
+nav-bar:not(.show)  .nav-bar-item.title text {
+    color: #fff;
+}
+
+.container {
+    padding-bottom: 50px;
+}
+
+.groupon-banner {
+    position: relative;
+    clip-path: ellipse(110% 100% at 50% 0%);
+}
+
+.banner-image {
+    
+}
+
+.rule-btn {
+    color: #fff;
+    font-size: 12px;
+    position: absolute;
+    bottom: 100px;
+    right: 0;
+    height: 25px;
+    border-radius: 13px 0 0 13px;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 8px;
+}
+
+.rule-btn image {
+    width: 15px;
+    height: 15px;
+    margin-right: 3px;
+}
+
+.rule-btn text {
+    line-height: 1;
+}
+
+.no-groupon-product {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.groupon-title {
+    width: 90px;
+    margin-bottom: 5px;
+}
+
+.groupon-product-header {
+    margin: 25px 0;
+}
+
+.groupon-desc {
+    color: #888;
+    font-size: 13px;
+}
+
+.products-container {
+    margin: 50px 0;
+    padding: 0 20px;
+}
+
+.products .product {
+    box-shadow: 0px 2px 20px 3px #f3f3f3;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 25px 0;
+}
+
+.product-image-wrapper {
+    width: 100%;
+    height: 160px;
+    position: relative;
+}
+
+.product-image-wrapper image {
+    width: 100%;
+    height: 100%;
+}
+
+.member-amount {
+    font-size: 12px;
+    color: #fff;
+    background-color: #fa4b48;
+    width: 80px;
+    height: 22px;
+    border-radius: 0 0 12px 12px;
+    position: absolute;
+    top: 0;
+    left: 25px;
+    display: flex;
+    justify-content: center;
+    line-height: 22px;
+}
+
+.featured .go-groupon {
+    color: #fff;
+    background-color: #fa4b48;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 47px;
+    height: 47px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    transform: translateY(50%);
+}
+
+.product .product-detail {
+    padding: 15px 15px 10px 15px;
+    background-color: #fff;
+}
+
+.product .product-title {
+    font-size: 15px;
+    margin-bottom: 2px;
+    width: calc(100% - 50px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product .product-price {
+    color: #fa4b48;
+    padding: 0;
+    display: flex;
+    align-items: flex-end;
+}
+
+.product-price-regular {
+    color: #888;
+    font-size: 10px;
+    text-decoration: line-through;
+}
+
+.product-price-regular, .product-price-regular text {
+    line-height: 1;
+}
+
+.product .product-meta {
+    color: #888;
+    font-size: 11px;
+    margin-top: 7px;
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.product-meta-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 4px;
+}
+
+.normal .product {
+    display: flex;
+    border-radius: 10px;
+}
+
+.normal .product-image-wrapper {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.normal .member-amount {
+    font-size: 10px;
+    border-radius: 0;
+    background-color: var(--mainColor);
+    top: 15%;
+    left: 15%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.normal .product .product-detail {
+    padding: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.normal .product .product-title {
+    width: 100%;
+    white-space: normal;
+}
+
+.normal .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.normal .go-groupon {
+    flex-shrink: 0;
+    line-height: 1;
+    border-radius: 2px;
+    padding: 7px 16px;
+    font-size: 12px;
+    color: #fff;
+    background-color: var(--mainColor);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navi-button {
+    border: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 50px;
+}
+
+/* W2W Extension, Name: w2w-products-groupon, Code: grouponProductListStyles */

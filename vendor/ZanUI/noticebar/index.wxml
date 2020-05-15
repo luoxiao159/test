@@ -1,0 +1,11 @@
+<template name="zan-noticebar">
+    <view class="zan-noticebar" style="color:{{color}};background-color:{{bgColor}};{{url ? 'padding-right:20px;' : ''}}" data-url="{{url}}" bindtap="linkTap">
+        <view class="iconfont iconfont-notice"></view>
+        <view id="{{ componentId }}__content-wrap" style="height: 18px; overflow: hidden; position: relative;">
+            <view animation="{{ animationData }}" id="{{ componentId }}__content" style="position: absolute; white-space: nowrap;">
+                {{ text }}
+            </view>
+        </view>
+        <view wx:if="{{url}}" class="iconfont iconfont-arrow-right"></view>
+    </view>
+</template>

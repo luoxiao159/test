@@ -1,0 +1,51 @@
+<!--templates/product-review.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="product-review">
+    <view class="review">
+        <view class="review-header">
+            <view class="review-header-main">
+                <view class="review-header-avatar">
+                    <image src="{{item.avatar}}"></image>
+                </view>
+                <view class="review-header-name">{{item.name}}</view>
+            </view>
+            <view class="review-header-rate">
+                <image src="/images/rate-{{item.rating - 1}}.svg"></image>
+                <text>{{reviewText[item.rating - 1]}}</text>
+            </view>
+        </view>
+        <view class="review-content">{{item.review}}</view>
+        <view class="review-images">
+            <block wx:for="{{item.images}}" wx:for-item="image" wx:key="key">
+                <view class="image {{item.images.length == 1 ? 'big' : ''}}" data-src="{{image}}" bindtap="reviewViewFullScreen">
+                    <image src="{{image}}" mode="aspectFill"></image>
+                </view>
+            </block>
+        </view>
+        <view class="review-footer">
+            <view class="review-date">{{item.date_created}}</view>
+            <view class="review-reply" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="openReplyPopup">
+                <image src="/images/review-reply.svg" mode="widthFix"></image>
+            </view>
+        </view>
+        <view wx:if="{{item.children.length > 0}}" class="review-children">
+            <block wx:for="{{item.children}}" wx:key="key">
+                <view class="child-review">
+                    <image class="child-review-avatar" src="{{item.official ? logo : item.avatar}}"></image>
+                    <view class="child-review-main">
+                        <text class="child-review-name {{item.official ? 'official' : ''}}">{{item.official ? '官方回复' : item.name}}：</text>
+                        <text class="child-review-content">{{item.review}}</text>
+                    </view>
+                </view>
+            </block>
+			<view wx:if="{{item.bottomStyle != 'nomore'}}" class="load-more" data-index="{{index}}" data-id="{{item.id}}" bindtap="loadMoreReply">加载更多</view>
+        </view>
+    </view>
+</template>

@@ -1,0 +1,30 @@
+<!--templates/share-popup.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="share-popup">
+    <view class="zan-popup zan-popup--bottom share-popup {{isSharePopup ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="closeSharePopup" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <template is="share-bar"></template>
+        </view>
+    </view>
+</template>
+
+<template name="share-bar">
+    <view class="share-btn">
+        <button open-type="share">
+            <image src="/images/share-friend.svg"></image>
+            <text>分享给好友</text>
+        </button>
+    </view>
+    <view class="share-btn" bindtap="sharePoster">
+        <image src="/images/share-timeline.svg"></image>
+        <text>分享海报</text>
+    </view>
+</template>

@@ -1,0 +1,75 @@
+<!--pages/shipping-detail/shipping-detail.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view wx:if="{{order != null}}" class="container shipping-detail">
+
+    <!-- 订单物品列表开始 -->
+    <view class="item-list">
+        <block wx:for="{{order.line_items}}" wx:key="key">
+            <view class="image">
+                <lazy-image src="{{item.image[0].single.url}}" mode="aspectFill" />
+            </view>
+        </block>
+    </view>
+    <!-- 订单物品列表结束 -->
+
+    <!-- 物流公司和单号开始 -->
+    <view wx:if="{{order.shipper}}" class="shipper" data-copy="{{order.shipper.code}}" bindtap="copyText">
+        <view class="shipper-icon">
+            <image src="/images/shipper-{{order.shipper.shipper_slug}}.png"></image>
+        </view>
+        <view class="shipper-detail">
+            <view class="name">
+                <text>{{order.shipper.shipper_name}}</text>
+            </view>
+            <view class="code">
+                <text>{{order.shipper.code}}</text>
+                <image class="copy" src="/images/copy_light.svg"></image>
+            </view>
+        </view>
+    </view>
+    <!-- 物流公司和单号结束 -->
+
+    <!-- 物流详情开始 -->
+    <view class="shipping-detail">
+        <block wx:for="{{order.shipping_detail.shipping}}" wx:key="key">
+            <view class="detail-line">
+                <view class="datetime">
+                    <text class="date">{{item.date}}</text>
+                    <text class="time">{{item.time}}</text>
+                </view>
+                <view class="detail">
+                    <text>{{item.AcceptStation}}</text>
+                </view>
+            </view>
+        </block>
+        <block wx:for="{{order.shipping_detail.order}}" wx:key="key">
+            <view class="detail-line">
+                <view class="datetime">
+                    <text class="date">{{item.date}}</text>
+                    <text class="time">{{item.time}}</text>
+                </view>
+                <view class="detail">
+                    <text>{{item.AcceptStation}}</text>
+                </view>
+            </view>
+        </block>
+    </view>
+    <!-- 物流详情结束 -->
+
+</view>

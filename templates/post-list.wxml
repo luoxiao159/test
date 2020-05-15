@@ -1,0 +1,38 @@
+<!--templates/post-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="post-list">
+    <view class="post-list">
+        <block wx:for="{{posts}}" wx:key="id">
+            <view class="list-item post-item" data-id="{{item.id}}" bindtap="goPostDetail">
+                <view wx:if="{{item.featured_media}}" class="post-image">
+                    <!--<lazy-image src="{{item.featured_media.large.url}}" dynamic-width="{{true}}" width="{{item.featured_media.large.width}}" height="{{item.featured_media.large.height}}" />-->
+                    <!-- width和height只传比例即可 -->
+                    <lazy-image src="{{item.featured_media.large.url}}" dynamic-width="{{true}}" width="3" height="2" mode="aspectFill" />
+                </view>
+                <view class="post-item-main">
+                    <view wx:if="{{item.title.rendered}}">
+                        <text class="title ellipsis ellipsis-2">{{item.title.rendered}}</text>
+                    </view>
+                    <view wx:if="{{item.excerpt.rendered}}" class="excerpt">
+                        <text class="ellipsis ellipsis-3">{{item.excerpt.rendered}}</text>
+                    </view>
+                    <view wx:if="{{showMeta}}" class="post-meta">
+                        <view class="meta meta-time">
+                            <text>{{item.date}}</text>
+                        </view>
+                        <view class="meta meta-view">
+                            <text>{{item.views}} 阅读</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </block>
+    </view>
+</template>

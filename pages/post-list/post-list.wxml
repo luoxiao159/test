@@ -1,0 +1,43 @@
+<!--pages/post-list/post-list.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="/vendor/ZanUI/tab/index.wxml" />
+<import src="/templates/post-list.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: false}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<!-- 帖子列表开始 -->
+<view class="container post-list">
+    <view class="top-bar" style="padding-top:{{NAV_HEIGHT}}">
+        <view class="search-wrapper">
+            <view class="search">
+                <image class="search-icon" src="/images/search_gray.svg"></image>
+                <input class="search-input" placeholder-class="input-placeholder-thin-black input-placeholder-small" placeholder="搜索资讯" value="{{searchInputValue}}" confirm-type="search" bindconfirm="searchSubmit" bindinput="searchInput"></input>
+                <image wx:if="{{clearSearchShow}}" class="search-close" src="/images/close.svg" bindtap="clearSearch"></image>
+            </view>
+        </view>
+
+        <view class="post-category-bar">
+            <template is="zan-tab" data="{{ tab: { list: tabList, selectedId: tabSelected, scroll: true, height: 0 }, componentId: 'category-tab' }}"></template>
+        </view>
+    </view>
+
+    <view class="tab-content-wrapper">
+        <template is="post-list" data="{{posts, showMeta: true}}"></template>
+    </view>
+</view>
+<!-- 帖子列表结束 -->
+
+<view wx:if="{{bottomStyle == 'nomore'}}" class="no-more">- 无更多文章 -</view>

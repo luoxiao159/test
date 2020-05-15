@@ -1,0 +1,589 @@
+/**
+ * Project: template
+ * Description: 小程序模块化装修
+ * Author: 
+ * Organization: 
+ * Version: 20200212
+ */
+
+/* W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponsStyle */
+
+.coupon-wrapper {
+    display: flex;
+    padding: 0 10px;
+}
+
+.more-coupons {
+    font-size: 12px;
+    flex-shrink: 0;
+    writing-mode: tb;
+    padding: 0 5px;
+    display: flex;
+    justify-content: center;
+    margin-left: 5px;
+}
+
+.coupon-list {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.coupon-popup .zan-popup__container {
+    width: auto;
+    background-color: transparent;
+}
+
+.coupon-popup-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.coupon-popup-background {
+    position: relative;
+}
+
+.coupon-popup-background-image {
+    width: 250px;
+}
+
+.coupon-popup-detail {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.coupon-popup-title {
+    font-size: 14px;
+    text-align: center;
+    color: #dd403a;
+    line-height: 1.6;
+}
+
+.coupon-popup-content {
+    font-size: 16px;
+    text-align: center;
+    color: #dd403a;
+    line-height: 1.6;
+}
+
+.coupon-popup-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: absolute;
+    top: 145px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 2px 2px #dd403a;
+}
+
+.coupon-popup-close {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #e84c44;
+    box-sizing: border-box;
+    padding: 5px;
+    position: absolute;
+    top: 0;
+    right: 22px;
+    transform: translateY(-50%);
+}
+
+.go-coupon-products {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    width: 190px;
+    height: 45px;
+    border-radius: 25px;
+    color: #dd403a;
+    background-color: #ecdb84;
+    margin-top: 20px;
+}
+
+/* W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponsStyle */
+
+/* 公告栏 */
+
+.zan-noticebar {
+    padding: 9px 10px;
+    padding-left: 28px;
+    line-height: 1.5;
+    font-size: 12px;
+    color: #f60;
+    background-color: #fff7cc;
+    position: relative;
+}
+
+.zan-noticebar .iconfont {
+    position: absolute;
+    font-size: 16px;
+    width: 16px;
+    height: 14px;
+    line-height: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.zan-noticebar .iconfont-notice {
+    left: 8px;
+}
+
+.zan-noticebar .iconfont-arrow-right {
+    right: 5px;
+    margin-top: -0.5px;
+}
+
+/* 搜索栏 */
+
+.search {
+    padding: 7px 8px;
+    background-color: #fff;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 5px;
+    border-radius: 32px;
+    background-color: #efefef;
+}
+
+.search-input-wrapper:active {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.search-label {
+    font-size: 12px;
+    line-height: 1;
+    color: #707070;
+    margin-left: 5px;
+}
+
+.search-input-wrapper image {
+    width: 15px;
+    height: 15px;
+    margin-left: 5px;
+}
+
+.navbar-search-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.search.navbar-search {
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: transparent;
+}
+
+.search.navbar-search .search-input-wrapper {
+    height: 32px;
+    flex-grow: 1;
+    margin-right: 20px;
+    background-color: #fff;
+}
+
+.search.navbar-search .logo {
+    padding-right: 5px;
+    margin-right: 2px;
+    border-right: 1px solid #ddd;
+}
+
+.search.navbar-search .logo image {
+    width: 20px;
+    height: 20px;
+}
+
+/* 文章 */
+
+.posts {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: #fff;
+    position: relative;
+}
+
+.posts::before {
+    content: "";
+    position: absolute;
+    top: -0.5px;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    border-top: 1px solid #ddd;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.posts-label {
+    padding: 8px 0;
+}
+
+.posts-label image {
+    position: relative;
+    width: 50px;
+    height: 12px;
+    padding: 7px 12px 7px 0;
+}
+
+.posts-label image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    border-right: 1px solid #ddd;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.post-title-wrapper {
+    margin-left: 12px;
+    position: relative;
+    flex-grow: 1;
+    height: 35px;
+}
+
+.post-title {
+    opacity: 0;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 13px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 1;
+    transform: translateY(-50%);
+    transition: opacity 0.2s ease;
+    z-index: 2;
+}
+
+.post-title.active {
+    opacity: 1;
+    z-index: 3;
+}
+
+/* W2W Extension, Name: w2w-home-page-modules, Code: moduleStyle */
+
+/* 模块 */
+
+.module-inner {
+    overflow: hidden;
+}
+
+.module.margin {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.module.margin:first-child {
+    margin-top: 0;
+}
+
+.module.margin:last-child {
+    margin-bottom: 0;
+}
+
+/* 快捷导航 */
+
+.nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 15px;
+    background-color: #fff;
+}
+
+.nav-list .nav {
+    width: 25%;
+    margin-bottom: 15px;
+}
+
+.nav-list.column-5 .nav {
+    width: 20%;
+}
+
+.nav-list .nav .image {
+    padding: 0 27%;
+}
+
+.nav-list.column-5 .nav .image {
+    padding: 0 22%;
+}
+
+.nav-list .nav .image .image-inner {
+    padding-bottom: 100%;
+    background-size: cover;
+    background-position: center center;
+    position: relative;
+}
+
+.nav-list .nav .title {
+    color: #777;
+    text-align: center;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.nav-list:not(.default) {
+    background-color: transparent;
+}
+
+.nav-list.dark .nav .title {
+    color: #fff;
+}
+
+/* 图片方块 */
+
+.images-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: #fff;
+}
+
+.images-layout .wrapper.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.images-layout .wrapper.row {
+    display: flex;
+}
+
+.images-layout.spacing {
+    padding: 2px;
+}
+
+.images-layout .item, .images-layout .item-inner {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.images-layout.spacing .item {
+    padding: 2px;
+}
+
+.images-layout .item .image {
+    width: 100%;
+    height: 100%;
+}
+
+.images-layout-three-4, .images-layout-three-5 {
+    flex-direction: column;
+}
+
+/* 弹窗 */
+
+.module-popup .zan-popup__container {
+    width: auto;
+    background-color: transparent;
+}
+
+.module-popup .zan-popup__container .popup-close {
+    position: absolute;
+    bottom: -42px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+
+/* 热区 */
+
+.imagemap-inner {
+    position: relative;
+}
+
+.imagemap-area {
+    position: absolute;
+}
+
+/* 地图 */
+
+.map-wrap {
+    position: relative;
+}
+
+.map-actions {
+    position: absolute;
+    bottom: 15px;
+    right: 10px;
+}
+
+.map-action {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #fff;
+    margin: 9px 0;
+    padding: 7px;
+    box-sizing: border-box;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-action image {
+    width: 100%;
+    height: 100%;
+}
+
+/* 悬浮菜单 */
+
+.menu-list-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 13;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(1, 0, 1, 0);
+}
+
+.menu-list-mask.show {
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.5s cubic-bezier(0, 1, 1, 1);
+}
+
+.menu-list {
+    position: fixed;
+    bottom: 70px;
+    right: 15px;
+    z-index: 13;
+}
+
+.menu-list .menu-btn {
+    margin-top: 5px;
+    display: flex;
+    width: 40px;
+    height: 40px;
+    padding: 7px;
+    border-radius: 50%;
+    background-color: #fff;
+    overflow: visible;
+}
+
+.menu-list .main-btn {
+    display: none;
+}
+
+.menu-list.style-upward .menu-btn, .menu-list.style-30deg .menu-btn,
+.menu-list.style-45deg .menu-btn {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 0.5s;
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.menu-list.style-upward.show .menu-btn, .menu-list.style-30deg.show .menu-btn,
+.menu-list.style-45deg.show .menu-btn {
+    opacity: 1;
+}
+
+.menu-list.style-upward .main-btn, .menu-list.style-30deg .main-btn,
+.menu-list.style-45deg .main-btn {
+    display: flex;
+    opacity: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-list .menu-btn image {
+    width: 100%;
+    height: auto;
+}
+
+/* 带margin banner */
+
+swiper swiper-item {
+    box-sizing: border-box;
+}
+
+swiper swiper-item .banner-wrap {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+swiper swiper-item .link-wrap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 分类选择器 */
+
+.category-filter {
+    padding: 10px 2px;
+    box-sizing: border-box;
+    height: 54px;
+    white-space: nowrap;
+}
+
+.category-filter .cat-item {
+    position: relative;
+    margin: 0 12px;
+    font-size: 14px;
+    display: inline-flex;
+    height: 30px;
+    align-items: center;
+}
+
+.category-filter .cat-item.selected {
+    font-weight: bold;
+}
+
+.category-filter .cat-item.selected::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: var(--mainColor);
+    border-radius: 10px;
+}
+
+/* 视频模块 */
+
+.module-video .module-inner {
+    position: relative;
+}
+
+/* W2W Extension, Name: w2w-home-page-modules, Code: moduleStyle */

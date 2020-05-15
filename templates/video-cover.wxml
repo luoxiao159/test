@@ -1,0 +1,28 @@
+<!--templates/video-cover.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<template name="video-cover">
+    <view class="video-cover">
+        <view class="cover-center" data-type="{{type}}" data-src="{{src}}" data-module-index="{{mIndex}}" data-index="{{index}}" bindtap="playVideo">
+            <image class="cover-poster" src="{{poster}}"></image>
+            <image class="cover-play" src="/images/play.svg"></image>
+            <view class="cover-duration">{{duration}}</view>
+        </view>
+        <!--<view class="cover-muted">
+            <image src="/images/camera.svg"></image>
+        </view>-->
+    </view>
+</template>
+
+<wxs module="JSON">
+    var parse = function(str) {
+        return JSON.parse(str);
+    }
+    module.exports.parse = parse;
+</wxs>

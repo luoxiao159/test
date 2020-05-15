@@ -1,0 +1,21 @@
+<!--templates/login-popup.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="login.wxml" />
+
+<template name="login-popup">
+    <view class="zan-popup zan-popup--center login-popup {{show ? 'zan-popup--show' : ''}}">
+        <view class="zan-popup__mask" bindtap="{{!userInfo ? 'closeLoginPopup' : ''}}" catchtouchmove="preventTouchMove"></view>
+        <view class="zan-popup__container">
+            <view class="login-popup-wrapper">
+                <template is="login" data="{{userInfo}}"></template>
+            </view>
+        </view>
+    </view>
+</template>

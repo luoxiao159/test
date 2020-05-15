@@ -1,0 +1,121 @@
+<!--templates/index.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="video-cover.wxml" />
+<import src="coupon.wxml" />
+
+<template name="title">
+    <block wx:if="{{!layout || layout == 'center'}}">
+        <view class="center-title {{border ? 'thin-border thin-border-bottom' : ''}}">{{title}}</view>
+    </block>
+    <block wx:elif="{{layout == 'left'}}">
+        <view class="left-title-wrap">
+            <view class="left-title">{{title}}</view>
+            <view wx:if="{{link}}" class="title-view-more" data-url="{{link}}" bindtap="linkTap">
+                <text>查看更多</text>
+                <image src="/images/go_light.svg"></image>
+            </view>
+        </view>
+    </block>
+</template>
+
+<template name="search">
+    <block wx:if="{{!layout || layout == 'normal'}}">
+        <view class="search" data-url="/pages/search/search" bindtap="linkTap">
+            <view class="search-input-wrapper">
+                <image src="/images/search_gray.svg"></image>
+                <view class="search-label">{{title || '搜索'}}</view>
+            </view>
+        </view>
+    </block>
+    <block wx:if="{{layout == 'navbar'}}">
+        <view class="search navbar-search" style="height:{{NAV_BAR_HEIGHT}}" data-url="/pages/search/search" bindtap="linkTap">
+            <view class="search-input-wrapper" style="{{transparent ? 'background-color:rgba(255,255,255,0.8)' : ''}}">
+                <view wx:if="{{logo}}" class="logo">
+                    <image src="{{logo}}"></image>
+                </view>
+                <image src="/images/search_gray.svg"></image>
+                <view class="search-label">{{title || '搜索'}}</view>
+            </view>
+            <view class="nav-bar-item btns-placeholder"></view>
+        </view>
+    </block>
+</template>
+
+<template name="banner">
+    <swiper class="banner {{marginLeft > 0 || marginRight > 0 ? 'margin' : ''}}" indicator-dots="{{banner.length > 1 && dots != 'off'}}" circular="true" autoplay="{{bannerSettings[mIndex].playing != true && autoplay != 'off'}}" interval="5000" duration="300"
+        previous-margin="{{marginLeft}}rpx" next-margin="{{marginRight}}rpx" data-module-index="{{mIndex}}" bindchange="swiperChange" style="height:{{banner[ bannerSettings[mIndex].current || 0 ].meta ? ( 750 - ( marginLeft || 0 ) - ( marginRight || 0 ) - ( ( paddingLR * 2 ) || 0 ) - ( mPaddingL || 0 ) - ( mPaddingR || 0 ) ) / JSON.parse(banner[ bannerSettings[mIndex].current || 0 ].meta).width * JSON.parse(banner[ bannerSettings[mIndex].current || 0 ].meta).height + ( ( paddingTB * 2 ) || 0 )  : bannerSettings[mIndex].heights[ bannerSettings[mIndex].current || 0 ]}}rpx;">
+        <block wx:for="{{banner}}" wx:key="key">
+            <swiper-item class="media-wrapper {{bannerSettings[mIndex].playing == true ? 'playing' : ''}}">
+                <view class="banner-wrap" style="padding:{{paddingTB || 0}}rpx {{paddingLR || 0}}rpx;">
+                    <block wx:if="{{item.type == undefined || item.type == 'image'}}">
+                        <block wx:if="{{item.meta}}">
+                            <view class="link-wrap" data-url="{{item.url}}" bindtap="linkTap" style="border-radius:{{br}}px;{{shadow ? 'box-shadow: 0 4px 5px 0 #ddd;' : ''}}">
+                                <lazy-image src="{{item.image}}" dynamic-width="{{true}}" full-width="{{true}}" />
+                            </view>
+                        </block>
+                        <block wx:else>
+                            <image src="{{item.image}}" class="slide-image" data-module-index="{{mIndex}}" data-index="{{index}}" bindload="imageLoad" data-url="{{item.url}}" bindtap="linkTap" style="height:{{bannerSettings[mIndex].heights[ index ]}}rpx;width:{{imgWidth}}rpx;"></image>
+                        </block>
+                    </block>
+                    <block wx:elif="{{item.type == 'video'}}">
+                        <video id="{{item.type + '_' + mIndex + '_' + index}}" src="{{item.image}}" poster="{{item.url}}" style="height:{{( 750 - ( marginLeft || 0 ) - ( marginRight || 0 ) - ( ( paddingLR * 2 ) || 0 ) - ( mPaddingL || 0 ) - ( mPaddingR || 0 ) ) / JSON.parse(item.meta).width * JSON.parse(item.meta).height}}rpx" data-module-index="{{mIndex}}" data-id="{{item.type + '_' + mIndex + '_' + index}}"
+                            data-type="{{item.type}}" bindplay="videoPlay" bindpause="videoPause" bindended="videoPause"></video>
+                        <template is="video-cover" data="{{type: item.type, poster: item.url, duration: JSON.parse(item.meta).duration, mIndex, index}}"></template>
+                    </block>
+                    <block wx:elif="{{item.type == 'txvideo'}}">
+                        <txvideo vid="{{item.image}}" playerid="{{item.image}}" width="100%" height="{{( 750 - ( marginLeft || 0 ) - ( marginRight || 0 ) - ( ( paddingLR * 2 ) || 0 ) - ( mPaddingL || 0 ) - ( mPaddingR || 0 ) ) / JSON.parse(item.meta).width * JSON.parse(item.meta).height}}rpx" isHiddenStop="{{true}}" isNeedMutex="{{false}}" usePoster="{{true}}" autoplay="{{false}}" data-module-index="{{mIndex}}"
+                            data-id="{{item.image}}" data-type="{{item.type}}" bindplay="videoPlay" bindpause="videoPause" bindended="videoPause"></txvideo>
+                        <template is="video-cover" data="{{src: item.image, type: item.type, poster: item.url || JSON.parse(item.meta).poster, duration: JSON.parse(item.meta).duration, mIndex, index}}"></template>
+                    </block>
+                </view>
+            </swiper-item>
+        </block>
+    </swiper>
+</template>
+
+<template name="posts">
+    <view class="posts">
+        <view class="posts-label" data-url="/pages/post-list/post-list" bindtap="linkTap">
+            <image src="/images/posts-label.svg"></image>
+        </view>
+        <view class="post-title-wrapper">
+            <block wx:for="{{posts}}" wx:key="key">
+                <view class="post-title {{currentPost == index ? 'active' : ''}}" data-id="{{item.id}}" bindtap="goPostDetail">{{item.title.rendered}}</view>
+            </block>
+        </view>
+    </view>
+</template>
+
+<template name="button">
+    <button class="navi-button" data-url="{{url}}" bindtap="linkTap">
+        <text>{{text}}</text>
+        <image src="/images/go_light.svg"></image>
+    </button>
+</template>
+
+<!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponsTemplate -->
+<template name="coupons">
+    <view class="coupon-wrapper">
+        <view class="coupon-list">
+            <block wx:for="{{coupons}}" wx:key="key">
+                <template is="coupon" data="{{item}}"></template>
+            </block>
+        </view>
+        <view class="more-coupons" data-url="/pages/coupon-center/coupon-center" bindtap="linkTap">领取更多</view>
+    </view>
+</template>
+<!-- W2W Extension, Name: w2w-advanced-coupon, Code: indexCouponsTemplate -->
+
+<wxs module="JSON">
+    var parse = function(str) {
+        return JSON.parse(str);
+    }
+    module.exports.parse = parse;
+</wxs>

@@ -1,0 +1,71 @@
+<!--pages/coupon-center/coupon-center.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<!-- W2W Extension, Name: w2w-advanced-coupon, Code: couponCenterContent -->
+<import src="/templates/login-popup.wxml" />
+<import src="/templates/nav-bar.wxml" />
+
+<nav-bar custom-style="{{ {backgroundColor:'#fff'} }}">
+    <view slot="content" class="nav-bar-wrapper-wrap">
+        <template is="nav-bar" data="{{pageTitle, backBtn: true}}"></template>
+    </view>
+    <view slot="placeholder" style="height:{{NAV_HEIGHT}}"></view>
+</nav-bar>
+
+<view class="container coupon-center">
+    <view class="coupon-list">
+        <block wx:if="{{coupons.length > 0}}">
+            <block wx:for="{{coupons}}" wx:key="key">
+
+                <view class="coupon {{item.discount_type}} {{item.is_receive_limit_reached || item.is_expired ? 'invalid' : ''}}" data-id="{{item.code}}">
+                    <view class="coupon-main" data-code="{{item.code}}" bindtap="{{item.is_receive_limit_reached || item.is_expired ? '' : 'receiveCoupon'}}">
+                        <image src="/images/{{item.is_receive_limit_reached || item.is_expired ? 'center-get-coupon-expired.svg' : 'center-get-coupon.svg'}}" mode="widthFix"></image>
+                        <view class="coupon-content">
+                            <view class="coupon-value">
+                                <block wx:if="{{item.discount_type == 'percent'}}">
+                                    <view class="product-price">
+                                        <text>{{item.amount}}</text>
+                                        <text class="currency">折</text>
+                                    </view>
+                                </block>
+                                <block wx:else>
+                                    <view class="product-price">
+                                        <text class="currency">{{currency}}</text>
+                                        <text>{{item.amount}}</text>
+                                    </view>
+                                </block>
+                                <view class="coupon-detail">
+                                    <view class="coupon-description">
+                                        <text>{{item.description}}</text>
+                                    </view>
+                                    <view wx:if="{{item.date_expires != null }}" class="coupon-expiry-date">
+                                        <text>有效期至 {{item.date_expires}}</text>
+                                    </view>
+                                </view>
+                            </view>
+                            <view class="coupon-receive">{{item.is_expired ? '已过期' : item.is_receive_limit_reached ? '已抢光' : '立即领取'}}</view>
+                        </view>
+                    </view>
+                    <view class="instruction {{expandedCoupons[item.code] ? 'expand' : ''}}">
+                        <text>{{item.instruction}}</text>
+                        <view wx:if="{{item.showExpandBtn == true}}" class="expand-btn" data-code="{{item.code}}" bindtap="expandSwitch">
+                            <image src="/images/back_white_light.svg"></image>
+                        </view>
+                    </view>
+                </view>
+
+            </block>
+        </block>
+        <block wx:elif="{{coupons != null}}">
+            <view class="no-coupon">暂无可领取优惠券</view>
+        </block>
+    </view>
+    <template is="login-popup" data="{{show: isLoginPopup, userInfo}}"></template>
+</view>
+<!-- W2W Extension, Name: w2w-advanced-coupon, Code: couponCenterContent -->

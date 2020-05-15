@@ -1,0 +1,253 @@
+/* pages/order-review-post/order-review-post.wxss */
+
+/**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */
+
+page {
+    background-color: #f5f5f5;
+}
+
+.cart-item {
+    background-color: #fff;
+    display: flex;
+    position: relative;
+    margin: 10px 0;
+    padding: 8px 15px;
+}
+
+.cart-item .product-image {
+    flex-shrink: 0;
+}
+
+.cart-item .product-image image {
+    width: 120rpx;
+    height: 120rpx;
+    flex-basis: 120rpx;
+}
+
+.cart-item .cart-detail-wrapper {
+    display: flex;
+    flex-grow: 1;
+    padding: 0 20rpx;
+}
+
+.cart-item .cart-detail {
+    width: 400rpx;
+}
+
+.cart-item .cart-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cart-item .cart-detail .product-title, .cart-item .cart-detail .choose-wrapper {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cart-item .cart-detail .product-title {
+    word-break: break-all;
+    font-size: 13px;
+}
+
+.cart-item .cart-detail .choose-wrapper {
+    font-size: 12px;
+}
+
+.cart-item .cart-detail .choose-wrapper text {
+    color: #888;
+}
+
+.cart-item .cart-item-price {
+    display: flex;
+    align-items: center;
+}
+
+/* 评价区 */
+
+.review {
+    padding: 0 15px;
+    background-color: #fff;
+}
+
+.review-rate {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    position: relative;
+}
+
+.review-rate-inner {
+    display: flex;
+    align-items: center;
+}
+
+.review-rate::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    border-bottom: 1px solid #ddd;
+    transform-origin: 0 0;
+    transform: scale(0.5, 0.5);
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.review-rate-text {
+    font-size: 13px;
+    margin-right: 20px;
+}
+
+.review-rate-image {
+    width: 25px;
+    height: 25px;
+    margin-right: 2px;
+    position: relative;
+    z-index: 2;
+}
+
+.review-rate-result {
+    display: flex;
+    align-items: center;
+}
+
+.review-rate-result text {
+    font-size: 13px;
+    color: var(--mainColor);
+    margin-right: 5px;
+}
+
+.review-rate-result image {
+    width: 25px;
+    height: 25px;
+}
+
+.review-content textarea {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 13px;
+}
+
+.content-length {
+    height: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.review-images {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 1px;
+}
+
+.review-images .image {
+    border: 1px solid #ddd;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.review-images .image image {
+    width: 100%;
+    height: 100%;
+}
+
+.review-images .image .remove {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background-color: #f44336;
+    border-radius: 50%;
+}
+
+.review-images.uploading .image .remove {
+    display: none;
+}
+
+.review-images .image .remove image {
+    width: 12px;
+    height: 12px;
+    padding: 3px;
+}
+
+.review-images .image .progress {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.review-images .image .progress-bar {
+    width: 80%;
+    height: 10px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+    overflow: hidden;
+}
+
+.review-images.uploading .image .progress {
+    display: flex;
+}
+
+.review-images .image .progress-inner {
+    height: 100%;
+    background-color: var(--mainColor);
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    border-radius: 50%;
+}
+
+.icon.success {
+    background-color: #09bb07;
+}
+
+.icon.error {
+    background-color: #f5615f;
+}
+
+.content-length.over text {
+    color: #f44336;
+}
+
+.select-image {
+    border: 1px solid #ddd;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.select-image image {
+    width: 20px;
+    height: 20px;
+}
+
+.submit {
+    font-size: 14px;
+    margin: 15px 10px;
+    border-radius: 2px;
+}

@@ -1,0 +1,89 @@
+<!--templates/product-grid.wxml-->
+
+<!--**
+ * Project: WooCommerce微信小程序
+ * Description: 将WooCommerce商城接入微信小程序
+ * Author: 
+ * Organization: 
+ */-->
+
+<import src="product-price.wxml" />
+
+<template name="product-grid">
+    <view class="product">
+        <view class="product-inner" style="border-radius:{{br}}px;box-shadow:{{shadow}}">
+
+            <!-- W2W Extension, Name: w2w-products-favor, Code: selectMask -->
+            <view wx:if="{{inEdit}}" class="select-mask" data-index="{{index}}" bindtap="switchSelect">
+                <view class="checkbox">
+                    <block wx:if="{{selectedProducts[index]}}">
+                        <icon type="success" size="20" color="#3db1b0" />
+                    </block>
+                    <block wx:else>
+                        <view class="not-selected"></view>
+                    </block>
+                </view>
+            </view>
+            <!-- W2W Extension, Name: w2w-products-favor, Code: selectMask -->
+
+            <view class="product-main" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="goProductDetail">
+
+                <view class="product-image-wrapper">
+                    <!--<lazy-image src="{{item.images[0].single.url}}" dynamic-width="{{true}}" width="{{item.images[0].single.width}}" height="{{item.images[0].single.height}}" />-->
+                    <!-- width和height只传比例即可 -->
+                    <lazy-image src="{{item.images[0].single.url}}" dynamic-width="{{true}}" width="1" height="1" mode="aspectFill" />
+                    <block wx:if="{{item.type != 'variable' && ! item.in_stock}}">
+                        <text class="badge outstock">缺货</text>
+                    </block>
+                    <block wx:elif="{{item.groupon.groupon_enabled}}">
+                        <text class="badge groupon">拼团</text>
+                    </block>
+                    <block wx:elif="{{item.on_sale}}">
+                        <text class="badge onsale">促销</text>
+                    </block>
+                </view>
+
+                <view class="product-detail">
+                    <text class="product-title ellipsis ellipsis-2">{{item.name}}</text>
+                    <view class="product-desc ellipsis">{{item.short_description_text}}</view>
+                    <block wx:if="{{layout == '2019'}}">
+                        <view class="price-row">
+                            <block wx:if="{{item.points.points_enabled}}">
+                                <!-- W2W Extension, Name: w2w-points-and-rewards, Code: pointsPrice2019 -->
+
+<!-- W2W Extension, Name: w2w-points-and-rewards, Code: pointsPrice2019 -->
+                            </block>
+                            <block wx:else>
+                                <template is="product-price" data="{{product: item, currency}}"></template>
+                            </block>
+                            <view class="add-to-cart" data-id="{{item.id}}" data-name="{{item.name}}" data-type="{{item.type}}" data-in-stock="{{item.in_stock}}" catchtap="addToCart">
+                                <image src="/images/cart_light_main_color.svg"></image>
+                            </view>
+                        </view>
+                    </block>
+                    <block wx:else>
+                        <view class="price-row">
+                            <block wx:if="{{item.points.points_enabled}}">
+                                <!-- W2W Extension, Name: w2w-points-and-rewards, Code: pointsPrice -->
+
+<!-- W2W Extension, Name: w2w-points-and-rewards, Code: pointsPrice -->
+                            </block>
+                            <block wx:else>
+                                <template is="product-price" data="{{product: item, currency}}"></template>
+                            </block>
+                            <view class="add-to-cart" data-id="{{item.id}}" data-name="{{item.name}}" data-type="{{item.type}}" data-in-stock="{{item.in_stock}}" catchtap="addToCart">
+                                <image src="/images/cart_light_main_color.svg"></image>
+                            </view>
+                        </view>
+                    </block>
+                </view>
+
+            </view>
+
+            <!--<view wx:if="{{layout != '2019'}}" class="cart">
+                <button class="add-to-cart" size="mini" data-id="{{item.id}}" data-name="{{item.name}}" data-type="{{item.type}}" data-in-stock="{{item.in_stock}}" bindtap="addToCart">{{item.type == 'variable' ? '选择选项' : '加入购物车'}}</button>
+            </view>-->
+
+        </view>
+    </view>
+</template>
